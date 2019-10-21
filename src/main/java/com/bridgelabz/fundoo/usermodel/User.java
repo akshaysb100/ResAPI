@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.model;
+package com.bridgelabz.fundoo.usermodel;
 
 import java.time.LocalDateTime;
 
@@ -18,17 +18,15 @@ public class User {
 	@Column(name = "Id")
 	private long id;
 	
+	
 	@Column(name = "First_Name")
 	private String firstName;
 	
 	@Column(name = "LastName")
 	private String lastName;
 	
-	@Column(name = "MobileNumber")
-	private String mobileNumber;
-	
 	@Column(name ="EmailId")
-	private String EmailId;
+	private String email;
 	
 	@Column(name = "Password")
 	private String password;
@@ -48,10 +46,11 @@ public class User {
 	
 	public User(long id, String firstName, String lastName, String email, String password, String isVerified,
 			LocalDateTime registeredDate, LocalDateTime updatedDate) {
+		
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.EmailId = email;
+		this.email = email;
 		this.password = password;
 		this.reTypePassword = isVerified;
 		this.registeredDate = registeredDate;
@@ -82,12 +81,12 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public String getEmailId() {
-		return EmailId;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setEmailId(String emailId) {
-		EmailId = emailId;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPassword() {
@@ -121,6 +120,7 @@ public class User {
 	public void setReTypePassword(String reTypePassword) {
 		this.reTypePassword = reTypePassword;
 	}
+
 	
 	
 	
