@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.usermodel;
+package com.bridgelabz.fundoo.user.model;
 
 import java.time.LocalDateTime;
 
@@ -8,6 +8,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Length;
+
+import lombok.NonNull;
 
 @Entity
 @Table(name = "user")
@@ -18,7 +25,6 @@ public class User {
 	@Column(name = "Id")
 	private long id;
 	
-	
 	@Column(name = "First_Name")
 	private String firstName;
 	
@@ -28,12 +34,13 @@ public class User {
 	@Column(name ="EmailId")
 	private String email;
 	
+	
 	@Column(name = "Password")
 	private String password;
 	
 	@Column(name = "RegistrationDate")
-
 	private LocalDateTime registeredDate;
+	
 	@Column(name = "UpdatedDate")
 	private LocalDateTime updatedDate;
 

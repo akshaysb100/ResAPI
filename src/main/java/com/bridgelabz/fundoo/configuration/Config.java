@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.userconfiguration;
+package com.bridgelabz.fundoo.configuration;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -12,4 +12,6 @@ public class Config {
 		ModelMapper modelMapper = new ModelMapper();
 		return modelMapper;
 	}
+	
+
 }

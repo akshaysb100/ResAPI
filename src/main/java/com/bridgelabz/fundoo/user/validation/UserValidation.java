@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.uservalidation;
+package com.bridgelabz.fundoo.user.validation;
 import java.util.regex.Pattern;
 public class UserValidation {
 

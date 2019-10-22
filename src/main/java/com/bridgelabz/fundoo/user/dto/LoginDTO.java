@@ -1,20 +1,21 @@
-package com.bridgelabz.fundoo.userdto;
+package com.bridgelabz.fundoo.user.dto;
 
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.lang.NonNull;
+
 
 public class LoginDTO {
 
-	@NonNull
+	@NotNull
 	@Email
 	@Size(min=8 ,max=40)
 	private String email;
 	
 	
-	@NonNull
+	@NotNull
 	@Size(min=8,max=30)
 	private String password;
 

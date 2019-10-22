@@ -1,27 +1,33 @@
-package com.bridgelabz.fundoo.userdto;
+package com.bridgelabz.fundoo.user.dto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.bridgelabz.fundoo.userservice.UserService;
-import com.bridgelabz.fundoo.uservalidation.UserValidation;
-
-import lombok.NonNull;
+import com.bridgelabz.fundoo.user.service.UserService;
 
 public class UserDTO {
  
 	@Autowired
 	UserService userService;
 	
-	@NonNull
-	@Size(min = 3, message = "name cannot be less than 3 characters")
+	@NotNull
+	@Size(min = 3, message = "first name cannot be less than 3 characters")
     private String firstName;
 	
+	@NotNull
+	@Size(min = 3, message = "last name cannot be less than 3 characters")
 	private String lastName;
 	
+	@NotNull
+	@Pattern(regexp=".+@.+\\..+", message="Wrong email!")
 	private String email;
 	
+	@NotNull(message="Please select a password")
+	@Length(min=5, max=10, message="Password should be between 5 - 10 charactes")
 	private String password;
 	
 	private String reTypePassword;
