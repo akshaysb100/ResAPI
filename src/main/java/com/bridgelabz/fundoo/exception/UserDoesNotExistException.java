@@ -1,7 +1,7 @@
 package com.bridgelabz.fundoo.exception;
 
+@SuppressWarnings("serial")
 public class UserDoesNotExistException extends RuntimeException {
-	
 	
 	String massage;
 	public UserDoesNotExistException() {
@@ -11,6 +11,5 @@ public class UserDoesNotExistException extends RuntimeException {
     public UserDoesNotExistException(String massage) {
              super(massage);		
 	}
-
 	
 }

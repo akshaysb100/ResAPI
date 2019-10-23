@@ -3,7 +3,6 @@ package com.bridgelabz.fundoo.user.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -83,8 +82,5 @@ public class UserDTO {
 		this.reTypePassword = reTypePassword;
 	}
 
-	
-	
-	
 	
 }

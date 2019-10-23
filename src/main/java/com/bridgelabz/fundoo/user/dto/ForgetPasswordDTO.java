@@ -3,8 +3,6 @@ package com.bridgelabz.fundoo.user.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
-
 public class ForgetPasswordDTO {
 	
 	@NotNull
@@ -47,8 +45,4 @@ public class ForgetPasswordDTO {
 		this.email = email;
 	}
     
-    
-	
-    
-
 }

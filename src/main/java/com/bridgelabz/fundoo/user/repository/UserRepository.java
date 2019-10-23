@@ -14,5 +14,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	public String findByPassword(String password);
 
-//	public void saveAll(Optional<User> checkEmail);
 }

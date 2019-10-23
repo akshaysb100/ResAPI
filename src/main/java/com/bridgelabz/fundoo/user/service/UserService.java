@@ -9,9 +9,8 @@ import com.bridgelabz.fundoo.user.model.User;
 
 
 public interface UserService {
-	
 
-public String register(UserDTO userDto);
+public Response register(UserDTO userDto);
 public Response login(LoginDTO loginDTO) throws UserDoesNotExistException ;
 //public String forgetPassword(ForgetPasswordDTO forgetPassword);
 public String updateUser(LoginDTO loginDTO);

@@ -1,10 +1,7 @@
 package com.bridgelabz.fundoo.user.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
+import javax.imageio.spi.RegisterableService;
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bridgelabz.fundoo.user.dto.ForgetPasswordDTO;
 import com.bridgelabz.fundoo.user.dto.LoginDTO;
 import com.bridgelabz.fundoo.user.dto.UserDTO;
-import com.bridgelabz.fundoo.user.model.User;
 import com.bridgelabz.fundoo.user.service.UserService;
 import com.bridgelabz.fundoo.utility.Response;
 
@@ -34,12 +29,18 @@ public class UserController {
 		return "welcome user";
 	}	
 	
+//	@PostMapping("/register")
+//	public String register(@RequestBody @Valid UserDTO userDTO) {
+//		
+//		return userService.register(userDTO);
+//		
+//	}
 	
 	@PostMapping("/register")
-	public String register(@RequestBody @Valid UserDTO userDTO) {
+	public ResponseEntity<Response> Register(@RequestBody @Valid UserDTO userDTO){
+		Response response = userService.register(userDTO);
 		
-		return userService.register(userDTO);
-		
+		return new ResponseEntity<Response>(response, HttpStatus.CONFLICT);
 	}
 	
 	 @PostMapping("/login")
@@ -47,7 +48,7 @@ public class UserController {
 
 	 Response response = userService.login(loginDTO);
 
-	 return new ResponseEntity<Response>(response, HttpStatus.CONFLICT);
+	 return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
 
 	 }
 	
@@ -56,4 +57,5 @@ public class UserController {
 			
 	  return userService.updateUser(loginDTO);
 	 }
+	 
 }

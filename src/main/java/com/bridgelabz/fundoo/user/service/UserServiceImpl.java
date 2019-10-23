@@ -16,7 +16,7 @@ import com.bridgelabz.fundoo.user.model.User;
 import com.bridgelabz.fundoo.user.repository.UserRepository;
 import com.bridgelabz.fundoo.utility.Response;
 
-@PropertySource("classpath:error.properties")
+@PropertySource(name="user",value= {"classpath:response.properties","classpath:userupdate.properties"})
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -30,9 +30,8 @@ public class UserServiceImpl implements UserService {
     private Environment environment;
 	
     
-    
 	@Override
-	public String register(UserDTO userDto) {
+	public Response register(UserDTO userDto) throws UserDoesNotExistException {
 		 
 		User user = modelMapper.map(userDto,User.class);
 		
@@ -41,33 +40,27 @@ public class UserServiceImpl implements UserService {
 	    	user.setRegisteredDate(LocalDateTime.now());
 			user.setUpdatedDate(LocalDateTime.now());
 			userRepository.save(user);
-	    	return "User Registered!!!!";
+			throw new UserDoesNotExistException(environment.getProperty("status.register.success"));
 	    }
 	    else {
-	    	return "password and reTypePassword not same!!!";
+	    	return new Response(HttpStatus.BAD_REQUEST.value(),environment.getProperty("status.register.incorrectpassword"));
+	    }
 	    }
 		
-		
-	}
-
+	
 	@Override
 	public Response login(LoginDTO loginDTO)  throws UserDoesNotExistException {
 		
-		
-		
-		    Optional<User> userCheck = userRepository.findByEmail(loginDTO.getEmail());
+		  Optional<User> userCheck = userRepository.findByEmail(loginDTO.getEmail());
 		     
 		  if(!userCheck.isPresent()) {
 			  throw new UserDoesNotExistException(environment.getProperty("status.login.userexist"));
 		  }else if(userCheck.get().getPassword().equals(loginDTO.getPassword())) {
-//				  userCheck.get().setFirstName("sohan");
-//				  userRepository.save(userCheck.get());
-				  System.out.println(userCheck.get().getFirstName());
 				throw new UserDoesNotExistException(environment.getProperty("status.login.success"));
 			}else if(!userCheck.get().getPassword().equals(loginDTO.getPassword())) {
-				return new Response(environment.getProperty("status.login.incorrectpassword"),HttpStatus.BAD_REQUEST.value());
+				return new Response(HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.incorrectpassword"));
 			}else {
-				return new Response(environment.getProperty("status.login.usernotexit"),HttpStatus.BAD_REQUEST.value());
+				return new Response(HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.usernotexit"));
 			}
 
 	}
@@ -81,8 +74,8 @@ public class UserServiceImpl implements UserService {
 			
 			if(checkEmail.get().getPassword().equals(loginDTO.getPassword())) {
 
-				  checkEmail.get().setFirstName("rohan");
-			      checkEmail.get().setLastName("ombale");
+				  checkEmail.get().setFirstName(environment.getProperty("user.firstname"));
+			      checkEmail.get().setLastName(environment.getProperty("user.lastname"));
 	    		  checkEmail.get().setUpdatedDate(LocalDateTime.now());
 			      userRepository.save(checkEmail.get());
 				  return "user update usscessfully";
@@ -91,11 +84,10 @@ public class UserServiceImpl implements UserService {
 			}
 					
 		}else {
-			return "user not exist";
+			return "user deos't exist";
 		}
 		
-		
-	}
+}
 	
 	
 	

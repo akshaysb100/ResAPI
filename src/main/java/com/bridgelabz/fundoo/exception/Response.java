@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.utility;
+package com.bridgelabz.fundoo.exception;
 
 public class Response {
 
@@ -23,7 +23,10 @@ public class Response {
 	public void setMassage(String massage) {
 		this.massage = massage;
 	}
-	
-	
-	
+
+	@Override
+	public String toString() {
+		return "Response [Status=" + Status + ", massage=" + massage + "]";
+	}
+		
 }

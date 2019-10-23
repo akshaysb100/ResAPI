@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class UserException {
+public class GlobalException {
 	
 	@ExceptionHandler(UserDoesNotExistException.class)
-	public ResponseEntity<ExceptionResponse> existresponse(UserDoesNotExistException exception) {
-	ExceptionResponse exceptionresponse = new ExceptionResponse(HttpStatus.UNAUTHORIZED.value(),exception.getMessage());
+	public ResponseEntity<Response> existresponse(UserDoesNotExistException exception) {
+	Response exceptionresponse = new Response(HttpStatus.UNAUTHORIZED.value(),exception.getMessage());
 
-	return new ResponseEntity<ExceptionResponse>(exceptionresponse, HttpStatus.UNAUTHORIZED);
+	return new ResponseEntity<Response>(exceptionresponse, HttpStatus.UNAUTHORIZED);
 	}
 }

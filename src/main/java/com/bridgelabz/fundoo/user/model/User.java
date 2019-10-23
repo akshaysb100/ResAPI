@@ -22,26 +22,25 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "Id")
+	@Column(name = "id")
 	private long id;
 	
-	@Column(name = "First_Name")
+	@Column(name = "firstName")
 	private String firstName;
 	
-	@Column(name = "LastName")
+	@Column(name = "lastName")
 	private String lastName;
 	
-	@Column(name ="EmailId")
+	@Column(name ="emailId")
 	private String email;
 	
-	
-	@Column(name = "Password")
+	@Column(name = "password")
 	private String password;
 	
-	@Column(name = "RegistrationDate")
+	@Column(name = "registrationDate")
 	private LocalDateTime registeredDate;
 	
-	@Column(name = "UpdatedDate")
+	@Column(name = "updatedDate")
 	private LocalDateTime updatedDate;
 
 	@Column()
@@ -127,8 +126,5 @@ public class User {
 	public void setReTypePassword(String reTypePassword) {
 		this.reTypePassword = reTypePassword;
 	}
-
-	
-	
 	
 }
