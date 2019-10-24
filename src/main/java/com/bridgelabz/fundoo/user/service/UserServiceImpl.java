@@ -14,6 +14,7 @@ import com.bridgelabz.fundoo.user.dto.LoginDTO;
 import com.bridgelabz.fundoo.user.dto.UserDTO;
 import com.bridgelabz.fundoo.user.model.User;
 import com.bridgelabz.fundoo.user.repository.UserRepository;
+import com.bridgelabz.fundoo.utility.ErrorResponse;
 import com.bridgelabz.fundoo.utility.Response;
 
 @PropertySource(name="user",value= {"classpath:response.properties","classpath:userupdate.properties"})
@@ -29,23 +30,29 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private Environment environment;
 	
-    
 	@Override
 	public Response register(UserDTO userDto) throws UserDoesNotExistException {
 		 
+		Optional<User> userCheck = userRepository.findByEmail(userDto.getEmail());
+
 		User user = modelMapper.map(userDto,User.class);
-		
+		  if(!userCheck.isPresent()) {
 	    if(userDto.getPassword().equals(userDto.getReTypePassword())) {
 	    	
 	    	user.setRegisteredDate(LocalDateTime.now());
 			user.setUpdatedDate(LocalDateTime.now());
 			userRepository.save(user);
-			throw new UserDoesNotExistException(environment.getProperty("status.register.success"));
-	    }
+
+	    	return new Response (HttpStatus.BAD_REQUEST.value(),environment.getProperty("status.register.success"));
+              }
 	    else {
-	    	return new Response(HttpStatus.BAD_REQUEST.value(),environment.getProperty("status.register.incorrectpassword"));
+	    	throw new UserDoesNotExistException(environment.getProperty("status.register.incorrectpassword"));
 	    }
+	    }else {
+	    	throw new UserDoesNotExistException(environment.getProperty("status.register.ol"));
+
 	    }
+	}
 		
 	
 	@Override

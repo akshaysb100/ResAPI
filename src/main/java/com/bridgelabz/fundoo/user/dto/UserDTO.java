@@ -1,5 +1,6 @@
 package com.bridgelabz.fundoo.user.dto;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -8,13 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bridgelabz.fundoo.user.service.UserService;
 
-public class UserDTO {
+public class UserDTO  {
  
 	@Autowired
 	UserService userService;
 	
-	@NotNull
-	@Size(min = 3, message = "first name cannot be less than 3 characters")
+	@NotEmpty(message = "first name must not be empty")
     private String firstName;
 	
 	@NotNull

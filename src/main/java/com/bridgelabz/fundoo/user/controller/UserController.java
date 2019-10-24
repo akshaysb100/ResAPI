@@ -1,6 +1,6 @@
 package com.bridgelabz.fundoo.user.controller;
 
-import javax.imageio.spi.RegisterableService;
+
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.fundoo.user.dto.LoginDTO;
 import com.bridgelabz.fundoo.user.dto.UserDTO;
 import com.bridgelabz.fundoo.user.service.UserService;
+import com.bridgelabz.fundoo.utility.ErrorResponse;
 import com.bridgelabz.fundoo.utility.Response;
 
 @RestController
@@ -37,10 +38,11 @@ public class UserController {
 //	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<Response> Register(@RequestBody @Valid UserDTO userDTO){
-		Response response = userService.register(userDTO);
+	public ResponseEntity<UserDTO> Register(@Valid @RequestBody  UserDTO userDTO){
+	
+	     userService.register(userDTO);
 		
-		return new ResponseEntity<Response>(response, HttpStatus.CONFLICT);
+	    return new ResponseEntity<UserDTO>(userDTO, HttpStatus.OK);
 	}
 	
 	 @PostMapping("/login")
