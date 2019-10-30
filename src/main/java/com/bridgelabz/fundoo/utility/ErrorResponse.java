@@ -1,15 +1,19 @@
 package com.bridgelabz.fundoo.utility;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ErrorResponse {
 
-	
+	 private LocalDateTime dateTime;
 	 private String message;
 	 private List<String> details;
 	 
-	public ErrorResponse(String message, List<String> details) {
+
+
+	public ErrorResponse(LocalDateTime dateTime, String message, List<String> details) {
 		super();
+		this.dateTime = dateTime;
 		this.message = message;
 		this.details = details;
 	}
@@ -29,7 +33,13 @@ public class ErrorResponse {
 	public void setDetails(List<String> details) {
 		this.details = details;
 	}
-	 
-	
-	 
+
+	public LocalDateTime getDateTime() {
+		return dateTime;
+	}
+
+	public void setDateTime(LocalDateTime dateTime) {
+		this.dateTime = dateTime;
+	}
+		 
 }

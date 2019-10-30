@@ -46,21 +46,24 @@ public class User {
 	@Column()
 	private String reTypePassword;
 
+	@Column(name  =  "verify", nullable = false)
+	private boolean verify;
 	
 	public User() {
 	}
 	
-	public User(long id, String firstName, String lastName, String email, String password, String isVerified,
-			LocalDateTime registeredDate, LocalDateTime updatedDate) {
-		
+	public User(long id, String firstName, String lastName, String email, String password, LocalDateTime registeredDate,
+			LocalDateTime updatedDate, String reTypePassword, boolean verify) {
+		super();
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		this.reTypePassword = isVerified;
 		this.registeredDate = registeredDate;
 		this.updatedDate = updatedDate;
+		this.reTypePassword = reTypePassword;
+		this.verify = verify;
 	}
 
 	public long getId() {
@@ -126,5 +129,15 @@ public class User {
 	public void setReTypePassword(String reTypePassword) {
 		this.reTypePassword = reTypePassword;
 	}
+
+	public boolean isVerify() {
+		return verify;
+	}
+
+	public void setVerify(boolean verify) {
+		this.verify = verify;
+	}
+	
+	
 	
 }

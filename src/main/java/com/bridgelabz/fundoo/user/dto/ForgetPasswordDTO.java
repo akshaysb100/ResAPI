@@ -9,18 +9,11 @@ public class ForgetPasswordDTO {
 	@Size(min=8,max=30)
 	private String password;
 
-    private String reTypePassword;
+    private String confirmPassword;
 
     private String email;
-    
-	public ForgetPasswordDTO(@NotNull @Size(min = 8, max = 30) String password, String reTypePassword) {
-		super();
-		this.password = password;
-		this.reTypePassword = reTypePassword;
-	
-	}
 
-	
+    
 	public String getPassword() {
 		return password;
 	}
@@ -29,12 +22,12 @@ public class ForgetPasswordDTO {
 		this.password = password;
 	}
 
-	public String getReTypePassword() {
-		return reTypePassword;
+	public String getConfirmPassword() {
+		return confirmPassword;
 	}
 
-	public void setReTypePassword(String reTypePassword) {
-		this.reTypePassword = reTypePassword;
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
 	}
 
 	public String getEmail() {
@@ -44,5 +37,7 @@ public class ForgetPasswordDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+    
+	
     
 }

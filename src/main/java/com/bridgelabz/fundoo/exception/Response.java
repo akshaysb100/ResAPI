@@ -10,7 +10,6 @@ public class Response {
 		Status = status;
 		this.massage = massage;
 	}
-	
 	public int getStatus() {
 		return Status;
 	}
