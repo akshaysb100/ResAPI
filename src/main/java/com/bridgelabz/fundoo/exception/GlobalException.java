@@ -28,9 +28,9 @@ public class GlobalException extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(UserDoesNotExistException.class)
 	public ResponseEntity<Response> existresponse(UserDoesNotExistException exception) {
-	Response exceptionresponse = new Response(HttpStatus.UNAUTHORIZED.value(),exception.getMessage());
+	Response exceptionresponse = new Response(HttpStatus.FORBIDDEN.value(),exception.getMessage());
 
-	return new ResponseEntity<Response>(exceptionresponse, HttpStatus.UNAUTHORIZED);
+	return new ResponseEntity<Response>(exceptionresponse, HttpStatus.FORBIDDEN);
 	}
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -42,26 +42,6 @@ public class GlobalException extends ResponseEntityExceptionHandler{
         }
         ErrorResponse error = new ErrorResponse(LocalDateTime.now(), "Validation Failed", details);
         return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
-    }
-//	
-//	  @ExceptionHandler(Exception.class)
-//	    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
-//	        List<String> details = new ArrayList<>();
-//	        details.add(ex.getLocalizedMessage());
-//	        ErrorResponse error = new ErrorResponse("Server Error", details);
-//	        return new ResponseEntity(error, HttpStatus.INTERNAL_SERVER_ERROR);
-//	    }
-//	 
-//	    @ExceptionHandler(UserDoesNotExistException.class)
-//	    public final ResponseEntity<Object> handleUserNotFoundException(UserDoesNotExistException ex, WebRequest request) {
-//	        List<String> details = new ArrayList<>();
-//	        details.add(ex.getLocalizedMessage());
-//	        ErrorResponse error = new ErrorResponse("Record Not Found", details);
-//	        return new ResponseEntity(error, HttpStatus.NOT_FOUND);
-//	    }
-//	 
-//	    
-	
-
-
+    }	
+    
 }

@@ -1,19 +1,26 @@
 package com.bridgelabz.fundoo.user.dto;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.Length;
 
 public class ForgetPasswordDTO {
 	
-	@NotNull
-	@Size(min=8,max=30)
+	@NotNull(message="Please select a password")
+	@Length(min=6, max=15, message="Password should be between 6 - 15 charactes")
+	@Pattern(regexp="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{6,}",message = "password has digit,lower case,upper case and special character must occur at least once,Password should be between 6 - 15 charactes")
 	private String password;
 
     private String confirmPassword;
 
-    private String email;
+	public ForgetPasswordDTO(
+			@NotNull(message = "Please select a password") @Length(min = 6, max = 15, message = "Password should be between 6 - 15 charactes") @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{6,}", message = "password has digit,lower case,upper case and special character must occur at least once,Password should be between 6 - 15 charactes") String password,
+			String confirmPassword) {
+		super();
+		this.password = password;
+		this.confirmPassword = confirmPassword;
+	}
 
-    
 	public String getPassword() {
 		return password;
 	}
@@ -30,14 +37,9 @@ public class ForgetPasswordDTO {
 		this.confirmPassword = confirmPassword;
 	}
 
-	public String getEmail() {
-		return email;
+	@Override
+	public String toString() {
+		return "ForgetPasswordDTO [password=" + password + ", confirmPassword=" + confirmPassword + "]";
 	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-    
 	
-    
 }

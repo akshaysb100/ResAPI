@@ -14,8 +14,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.bridgelabz.fundoo.exception.UserDoesNotExistException;
 import com.bridgelabz.fundoo.exception.VerificationFailedException;
+import com.bridgelabz.fundoo.user.dto.EmailPasswordDTO;
 import com.bridgelabz.fundoo.user.dto.ForgetPasswordDTO;
 import com.bridgelabz.fundoo.user.dto.LoginDTO;
+import com.bridgelabz.fundoo.user.dto.UpdateUserInformationDTO;
 import com.bridgelabz.fundoo.user.dto.UserDTO;
 import com.bridgelabz.fundoo.user.model.User;
 import com.bridgelabz.fundoo.user.repository.UserRepository;
@@ -46,12 +48,14 @@ public class UserServiceImpl implements UserService {
     private JavaMailSender javaMailSender;
     
 	
+	/**
+	 *purpose : this function used for Register user information and create token for email verification
+	 */
 	@Override
 	public Response register(UserDTO userDto) throws UserDoesNotExistException {
 		 
 		Optional<User> userCheck = userRepository.findByEmail(userDto.getEmail());
 
-		
 	   if(!userCheck.isPresent()) {
 			  
 	       if(userDto.getPassword().equals(userDto.getReTypePassword())) {
@@ -61,8 +65,10 @@ public class UserServiceImpl implements UserService {
 	    	User user = modelMapper.map(userDto,User.class);
 	    	user.setRegisteredDate(LocalDateTime.now());
 			user.setUpdatedDate(LocalDateTime.now());
+			user.setTime(System.currentTimeMillis());
 			userRepository.save(user);
  
+			
 			SimpleMailMessage mailMessage = new SimpleMailMessage();
 			
 			mailMessage.setTo(userDto.getEmail());
@@ -73,7 +79,7 @@ public class UserServiceImpl implements UserService {
 			mailMessage.setText("verification link " + " http://192.168.0.140:8080/users/verrifyUser/" + token);
 			javaMailSender.send(mailMessage);
 			
-	    	return new Response (HttpStatus.BAD_REQUEST.value(),environment.getProperty("status.register.success"));
+	    	return new Response (LocalDateTime.now(),HttpStatus.OK.value(),environment.getProperty("status.register.success"));
              
 	        }else {
 	        	 throw new UserDoesNotExistException(environment.getProperty("status.register.incorrectpassword"));
@@ -85,6 +91,9 @@ public class UserServiceImpl implements UserService {
 	}
 		
 	
+	/**
+	 *purpose : this function used for login user
+	 */
 	@Override
 	public Response login(LoginDTO loginDTO)  throws UserDoesNotExistException {
 		
@@ -100,138 +109,184 @@ public class UserServiceImpl implements UserService {
 			
 		  }else if(!userCheck.get().getPassword().equals(loginDTO.getPassword())) {
 				
-			  return new Response(HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.incorrectpassword"));
+			  return new Response(LocalDateTime.now(),HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.incorrectpassword"));
 		  }else {
 				
-			   return new Response(HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.usernotexit"));
+			   return new Response(LocalDateTime.now(),HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.usernotexit"));
 			}
 
 	}
-
-	@Override
-	public String updateUser(LoginDTO loginDTO) {
-
-		Optional<User> checkEmail = userRepository.findByEmail(loginDTO.getEmail());
-        
-		if(checkEmail.isPresent()) {
-			
-			if(checkEmail.get().getPassword().equals(loginDTO.getPassword())) {
-
-				  checkEmail.get().setFirstName(environment.getProperty("user.firstname"));
-			      checkEmail.get().setLastName(environment.getProperty("user.lastname"));
-	    		  checkEmail.get().setUpdatedDate(LocalDateTime.now());
-			      userRepository.save(checkEmail.get());
-				  return "user update usscessfully";
-			}else {
-				return "incorrect password";
-			}
-					
-		}else {
-			return "user deos't exist";
-		}
-		
-}
-
+	
+	
+	/**
+	 *purpose : this function used for registration verification 
+	 */
 	@Override
 	public Response verifyUser(String token) throws VerificationFailedException {
 		
 		Long id = tokenutil.decodeToken(token);
-		
 		Optional<User> verifyuser = userRepository.findById(id);
-		if(verifyuser.isPresent())
-		{
-				verifyuser.get().setVerify(true);
-				userRepository.save(verifyuser.get());
-				throw new VerificationFailedException(environment.getProperty("status.login.verifiedSucceed"));
+		
+		long time = ((System.currentTimeMillis()/1000)-(verifyuser.get().getTime()/1000));
+		System.out.println("time in second"+time);
+		
+		if (time<=600) {
+			
+			if(verifyuser.isPresent())
+			{
+					verifyuser.get().setVerify(true);
+					userRepository.save(verifyuser.get());
+					throw new VerificationFailedException(environment.getProperty("status.login.verifiedSucceed"));
 
-		}else
-		return new Response(HttpStatus.ACCEPTED.value(), environment.getProperty("status.login.verificationFailed"));
+			}else {
+				return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), environment.getProperty("status.login.verificationFailed"));
+			}
+			
+		} else {
+			 
+			 verifyuser.get().setEmail(null);
+			 verifyuser.get().setFirstName(null);
+//			 verifyuser.get().setId(0);
+			 verifyuser.get().setLastName(null);
+			 verifyuser.get().setPassword(null);
+			 verifyuser.get().setUpdatedDate(null);
+			 verifyuser.get().setReTypePassword(null);
+			 verifyuser.get().setRegisteredDate(null);
+     		 verifyuser.get().setTime(0);
+			 verifyuser.get().setVerify(false);
+			 userRepository.save(verifyuser.get());
+			
+			return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"));
+		}
+		
 	}
 
 
+	/**
+	 *purpose : this function used for create forget password and and create token for password verification
+	 */
 	@Override
-	public Response forgetPassword(ForgetPasswordDTO forgetPassword) throws UserDoesNotExistException {
-		Optional<User> checkEmail = userRepository.findByEmail(forgetPassword.getEmail());
+	public Response forgetPassword(String email) throws UserDoesNotExistException {
+		Optional<User> checkEmail = userRepository.findByEmail(email);
         
 		if(checkEmail.isPresent()) {
 			
-			User user = modelMapper.map(forgetPassword,User.class);			
+			checkEmail.get().setTime(System.currentTimeMillis());
+			userRepository.save(checkEmail.get());
 			
 			SimpleMailMessage mailMessage = new SimpleMailMessage();
 			
-			mailMessage.setTo(forgetPassword.getEmail());
+			mailMessage.setTo(email);
 			mailMessage.setFrom("akshaybavalekar100@gmail.com");
 			mailMessage.setSubject("valid user check");
-			String token = tokenutil.createToken(user.getId());
-			mailMessage.setText("verification link " + "http://192.168.0.140:8080/users/verrifyMail/" + token);
+			String token = tokenutil.createToken(checkEmail.get().getId());
+			mailMessage.setText("verification link " + "http://192.168.0.140:8080/users/resetPassword/" + token);
 			javaMailSender.send(mailMessage);
 			
 			  throw new UserDoesNotExistException(environment.getProperty("status.user.exists"));
 		}else {
-			   return new Response(HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.usernotexit"));
+			   return new Response(LocalDateTime.now(),HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.usernotexit"));
 		}
 	
 	}
 
 
+	/**
+	 *purpose : this function used password verification
+	 */
 	@Override
-	public Response verifyMail(String token,ForgetPasswordDTO forgetPassword) throws VerificationFailedException {
-		
+	public Response resetPassword(String token,ForgetPasswordDTO forgetPassword) throws VerificationFailedException {
 		
 		Long id = tokenutil.decodeToken(token);
-		
 		Optional<User> verifyuser = userRepository.findById(id);
-		 	
-//			String password = forgetPassword.getPassword();
-//			String ConfirmPassword = forgetPassword.getPassword();
 		  
-		String password = "akshay123";
-		String ConfirmPassword = "akshay123";
+		String password = forgetPassword.getPassword();
+		String ConfirmPassword = forgetPassword.getConfirmPassword();
 
-			System.out.println("password "+password);
-			System.out.println("conf "+ConfirmPassword);
-			if(password.equals(ConfirmPassword)) {
-				System.out.println("hi password");
-				 verifyuser.get().setPassword(password);
-				 verifyuser.get().setReTypePassword(ConfirmPassword);
-				 userRepository.save(verifyuser.get());
+		long time = ((System.currentTimeMillis()/1000)-(verifyuser.get().getTime()/1000));	
+		
+		if (time<=300) {
 				
-				 throw new VerificationFailedException(environment.getProperty("status.update.password"));
+				if(password.equals(ConfirmPassword)) {
+					
+					 verifyuser.get().setPassword(password);
+					 verifyuser.get().setReTypePassword(ConfirmPassword);
+					 verifyuser.get().setUpdatedDate(LocalDateTime.now());
+					 userRepository.save(verifyuser.get());
+					
+					 throw new VerificationFailedException(environment.getProperty("status.update.password"));
 
-			 }else {
-				return new Response(HttpStatus.ACCEPTED.value(), environment.getProperty("status.register.incorrectpassword"));
+				 }else {
+					return new Response(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), environment.getProperty("status.resetpassword.incorrectpassword"));
+				}
+				
+			} else {
+				return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"));
+			}			
+	}
 
-			}
+
+
+	/**
+	 *purpose : this function used to update user information
+	 */
+	@Override
+	public Response updateUser(EmailPasswordDTO emailPasswordDTO) throws UserDoesNotExistException {
+
+		Optional<User> userCheck = userRepository.findByEmail(emailPasswordDTO.getEmail());
+
+		   if(userCheck.isPresent()) {
+				  
+		       if(emailPasswordDTO.getPassword().equals(userCheck.get().getPassword())) {
+		    	
+		    	userCheck.get().setTime(System.currentTimeMillis());
+				userRepository.save(userCheck.get());
+				
+				SimpleMailMessage mailMessage = new SimpleMailMessage();
+				
+				mailMessage.setTo(emailPasswordDTO.getEmail());
+				mailMessage.setFrom("akshaybavalekar100@gmail.com");
+				mailMessage.setSubject("valid user check");
+				
+				String token = tokenutil.createToken(userCheck.get().getId());
+				mailMessage.setText("verification link " + " http://192.168.0.140:8080/users/resetInformation/" + token);
+				javaMailSender.send(mailMessage);
+				
+		    	return new Response (LocalDateTime.now(),HttpStatus.OK.value(),environment.getProperty("status.Update.process"));
+	             
+		        }else {
+		        	 throw new UserDoesNotExistException(environment.getProperty("status.Update.incorrectpassword"));
+		          }
+		       
+		    }else {
+		    	     throw new UserDoesNotExistException(environment.getProperty("status.update.usernotexit"));
+
+		    }
+	}
+
+
+	/**
+	 *purpose : this function used email verification
+	 */
+	@Override
+	public Response resetInformation(String token, UpdateUserInformationDTO userInfo) throws VerificationFailedException {
+		
+		Long id = tokenutil.decodeToken(token);
+		Optional<User> verifyuser = userRepository.findById(id);
+		
+		long time = ((System.currentTimeMillis()/1000)-(verifyuser.get().getTime()/1000));	
+		
+		if (time<=300) {
+				
+			 verifyuser.get().setFirstName(userInfo.getFirstName());
+			 verifyuser.get().setLastName(userInfo.getLastName());
+			 verifyuser.get().setUpdatedDate(LocalDateTime.now());
+			 userRepository.save(verifyuser.get());		
+			 throw new VerificationFailedException(environment.getProperty("status.update.password"));
+					 
+			} else {
+				return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"));
+			}		
 	}
 	
-	
-	
-//
-//	@Override
-//	public String forgetPassword(ForgetPasswordDTO forgetPassword) {
-//		
-//		Optional<User> checkEmail = userRepository.findByEmail(forgetPassword.getEmail());
-//		if(checkEmail.isPresent()) {
-//			
-//			User user = modelMapper.map(forgetPassword,User.class);
-//			
-//			if(forgetPassword.getPassword().equals(forgetPassword.getReTypePassword())) {
-//				user.setPassword(forgetPassword.getPassword());
-//				userRepository.save(user);
-//			}
-//			
-//			
-//			
-//		}else {
-//			
-//		}
-//		
-//		return null;
-//	}
-
-//	@Override//	public String forgetPassword(LoginDTO loginDTO);
-//	
-    //public String login(LoginDTO loginDTO) throws Exception;
-	
-
 }

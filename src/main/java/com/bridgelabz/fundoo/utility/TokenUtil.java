@@ -1,8 +1,5 @@
 package com.bridgelabz.fundoo.utility;
 
-
-import javax.xml.crypto.AlgorithmMethod;
-
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
@@ -54,9 +51,7 @@ public class TokenUtil {
 				DecodedJWT decojwt = jwtverifier.verify(token);
 				Claim claim = decojwt.getClaim("id");
 				userid = claim.asLong();
-				return userid;
-				
-				
+				return userid;	
 				
 			}
 

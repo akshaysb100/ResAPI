@@ -49,11 +49,14 @@ public class User {
 	@Column(name  =  "verify", nullable = false)
 	private boolean verify;
 	
+	@Column(name = "time")
+	private long time;
+	
 	public User() {
 	}
 	
 	public User(long id, String firstName, String lastName, String email, String password, LocalDateTime registeredDate,
-			LocalDateTime updatedDate, String reTypePassword, boolean verify) {
+			LocalDateTime updatedDate, String reTypePassword, boolean verify, long time) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -64,7 +67,10 @@ public class User {
 		this.updatedDate = updatedDate;
 		this.reTypePassword = reTypePassword;
 		this.verify = verify;
+		this.time = time;
 	}
+
+
 
 	public long getId() {
 		return id;
@@ -137,7 +143,13 @@ public class User {
 	public void setVerify(boolean verify) {
 		this.verify = verify;
 	}
-	
-	
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
 	
 }

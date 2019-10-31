@@ -1,16 +1,19 @@
 package com.bridgelabz.fundoo.utility;
 
+import java.time.LocalDateTime;
+
 public class Response {
 
+    private LocalDateTime dateTime;
 	private int Status;
 	private String massage;
-	
-	public Response(int status, String massage) {
+
+	public Response(LocalDateTime dateTime, int status, String massage) {
 		super();
+		this.dateTime = dateTime;
 		Status = status;
 		this.massage = massage;
 	}
-	
 	public int getStatus() {
 		return Status;
 	}
@@ -23,7 +26,11 @@ public class Response {
 	public void setMassage(String massage) {
 		this.massage = massage;
 	}
-	
-	
-	
+	public LocalDateTime getDateTime() {
+		return dateTime;
+	}
+	public void setDateTime(LocalDateTime dateTime) {
+		this.dateTime = dateTime;
+	}
+
 }

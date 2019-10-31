@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.fundoo.exception.VerificationFailedException;
+import com.bridgelabz.fundoo.user.dto.EmailPasswordDTO;
 import com.bridgelabz.fundoo.user.dto.ForgetPasswordDTO;
 import com.bridgelabz.fundoo.user.dto.LoginDTO;
+import com.bridgelabz.fundoo.user.dto.UpdateUserInformationDTO;
 import com.bridgelabz.fundoo.user.dto.UserDTO;
 import com.bridgelabz.fundoo.user.service.UserService;
 import com.bridgelabz.fundoo.utility.ErrorResponse;
@@ -35,37 +37,12 @@ public class UserController {
 		return "welcome user";
 	}	
 	
-//	@PostMapping("/register")
-//	public String register(@RequestBody @Valid UserDTO userDTO) {
-//		
-//		return userService.register(userDTO);
-//		
-//	}
-	
 	 @PostMapping("/register")
 	 public ResponseEntity<Response> Register(@Valid @RequestBody  UserDTO userDTO){
 	
 	     Response response =  userService.register(userDTO);
 		 
 	     return new ResponseEntity<Response>(response, HttpStatus.OK);
-	 }
-	
-	 @PostMapping("/login")
-	 public ResponseEntity<Response> login(@RequestBody  LoginDTO loginDTO) {
- 
-	     Response response = userService.login(loginDTO);
-
-	     return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
-
-	 }
-	
-	 @PutMapping("/updatePasswords")
-	 public ResponseEntity<Response> forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword) {
-		
-		System.out.println("up password");
-//	    return userService.updateUser(loginDTO);
-	    Response response = userService.forgetPassword(forgetPassword);
-	    return new ResponseEntity<Response>(response,HttpStatus.OK);
 	 }
 	 
 	 @RequestMapping("/verrifyUser/{token}")
@@ -74,12 +51,39 @@ public class UserController {
 		 Response response = userService.verifyUser(token);
 	     return new ResponseEntity<Response>(response, HttpStatus.OK);
 	 }
+	 @PostMapping("/login")
+	 public ResponseEntity<Response> login(@RequestBody  LoginDTO loginDTO) {
+ 
+	     Response response = userService.login(loginDTO);
+	     return new ResponseEntity<Response>(response, HttpStatus.UNAUTHORIZED);
+
+	 }
+	
+	 @PutMapping("/forgotPassword")
+	 public ResponseEntity<Response> forgetPassword(@RequestParam String email) {
+		
+	    Response response = userService.forgetPassword(email);
+	    return new ResponseEntity<Response>(response,HttpStatus.OK);
+	 }
 	 
-	 @RequestMapping(value = "/verrifyMail/{token}", method = RequestMethod.PUT)
-	 public ResponseEntity<Response> verifyMail(@PathVariable String token,@RequestBody ForgetPasswordDTO forgetPassword) throws VerificationFailedException{
+	 @PutMapping(value = "/resetPassword/{token}")
+	 public ResponseEntity<Response> resetPassword(@PathVariable String token,@Valid @RequestBody ForgetPasswordDTO forgetPassword) throws VerificationFailedException{
 		 
-		 System.out.println("token :"+token);
-		 Response response =userService.verifyMail(token,forgetPassword);
+		 Response response =userService.resetPassword(token,forgetPassword);
+		 return new ResponseEntity<Response>(response,HttpStatus.OK);
+	 }
+	 
+	 @PutMapping(value = "/updateUser")
+	 public ResponseEntity<Response> updateUser(@Valid @RequestBody EmailPasswordDTO emailPasswordDTO){
+		 
+		 Response response = userService.updateUser(emailPasswordDTO);
+		 return new ResponseEntity<Response>(response,HttpStatus.OK);
+	 }
+	 
+	 @PutMapping(value = "/resetInformation/{token}")
+	 public ResponseEntity<Response> resetInformation(@PathVariable String token,@Valid @RequestBody UpdateUserInformationDTO updateUserInformationDTO) throws VerificationFailedException{
+		 
+		 Response response =userService.resetInformation(token, updateUserInformationDTO);
 		 return new ResponseEntity<Response>(response,HttpStatus.OK);
 	 }
 	 

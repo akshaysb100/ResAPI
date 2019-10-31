@@ -15,10 +15,12 @@ public class UserDTO  {
 	UserService userService;
 	
 	@NotEmpty(message = "first name must not be empty")
+	@Pattern(regexp = "\\D*" ,message = "character accept only")
     private String firstName;
 	
 	@NotNull
 	@Size(min = 3, message = "last name cannot be less than 3 characters")
+	@Pattern(regexp = "\\D*" ,message = "character accept only")
 	private String lastName;
 	
 	@NotNull
@@ -26,7 +28,8 @@ public class UserDTO  {
 	private String email;
 	
 	@NotNull(message="Please select a password")
-	@Length(min=5, max=10, message="Password should be between 5 - 10 charactes")
+	@Length(min=6, max=15, message="Password should be between 6 - 15 charactes")
+	@Pattern(regexp="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{6,}",message = "password has digit,lower case,upper case and special character must occur at least once,Password should be between 6 - 15 charactes")
 	private String password;
 	
 	private String reTypePassword;
