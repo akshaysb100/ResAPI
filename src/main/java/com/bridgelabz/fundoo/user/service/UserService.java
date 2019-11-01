@@ -19,4 +19,6 @@ public Response updateUser(EmailPasswordDTO emailPasswordDTO) throws UserDoesNot
 public Response verifyUser(String token) throws VerificationFailedException;
 public Response resetPassword(String token,ForgetPasswordDTO forgetPasswordDTO) throws VerificationFailedException;
 public Response resetInformation(String token,UpdateUserInformationDTO userInfo) throws VerificationFailedException;	
+public Response deleteUser(EmailPasswordDTO emailPasswordDTO) throws UserDoesNotExistException;
+public Response deleteVerifyUser(String token) throws VerificationFailedException;
 }

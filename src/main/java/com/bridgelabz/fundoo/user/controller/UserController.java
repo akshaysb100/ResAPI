@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,4 +88,17 @@ public class UserController {
 		 return new ResponseEntity<Response>(response,HttpStatus.OK);
 	 }
 	 
+	 @DeleteMapping(value = "/deleteUser")
+	 public ResponseEntity<Response> deleteUser(@RequestBody EmailPasswordDTO emailPasswordDTO){
+		 
+		 Response response = userService.deleteUser(emailPasswordDTO);
+		 
+		 return new ResponseEntity<Response>(response,HttpStatus.OK);
+	 }
+	 
+	 @RequestMapping("/deleteVerifyUser/{token}")
+	 public ResponseEntity<Response> deleteVerifyUser(@PathVariable String token)throws VerificationFailedException{
+		 Response response = userService.deleteVerifyUser(token);
+		 return new ResponseEntity<Response>(response,HttpStatus.OK);
+	 }
 }

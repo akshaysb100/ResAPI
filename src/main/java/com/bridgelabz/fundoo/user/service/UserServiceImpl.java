@@ -1,3 +1,4 @@
+
 package com.bridgelabz.fundoo.user.service;
 
 import java.time.LocalDateTime;
@@ -287,6 +288,66 @@ public class UserServiceImpl implements UserService {
 			} else {
 				return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"));
 			}		
+	}
+
+
+	@Override
+	public Response deleteUser(EmailPasswordDTO emailPasswordDTO) throws UserDoesNotExistException {
+		
+		Optional<User> userCheck = userRepository.findByEmail(emailPasswordDTO.getEmail());
+
+		   if(userCheck.isPresent()) {
+				  
+		       if(emailPasswordDTO.getPassword().equals(userCheck.get().getPassword())) {
+		    	
+		    	userCheck.get().setTime(System.currentTimeMillis());
+				userRepository.save(userCheck.get());
+				
+				SimpleMailMessage mailMessage = new SimpleMailMessage();
+				
+				mailMessage.setTo(emailPasswordDTO.getEmail());
+				mailMessage.setFrom("akshaybavalekar100@gmail.com");
+				mailMessage.setSubject("valid user check");
+				
+				String token = tokenutil.createToken(userCheck.get().getId());
+				mailMessage.setText("verification link " + " http://192.168.0.140:8080/users/deleteVerifyUser/" + token);
+				javaMailSender.send(mailMessage);
+				
+		    	return new Response (LocalDateTime.now(),HttpStatus.OK.value(),environment.getProperty("status.delete.process"));
+	             
+		        }else {
+		        	 throw new UserDoesNotExistException(environment.getProperty("status.delete.incorrectpassword"));
+		          }
+		       
+		    }else {
+		    	     throw new UserDoesNotExistException(environment.getProperty("status.delete.usernotexit"));
+
+		    }
+	}
+
+
+	@Override
+	public Response deleteVerifyUser(String token) throws VerificationFailedException {
+		
+		Long id = tokenutil.decodeToken(token);
+		Optional<User> verifyuser = userRepository.findById(id);
+		
+		long time = ((System.currentTimeMillis()/1000)-(verifyuser.get().getTime()/1000));
+		
+		if (time<=600) {
+			
+			if(verifyuser.isPresent())
+			{
+					userRepository.deleteById(verifyuser.get().getId());
+					throw new VerificationFailedException(environment.getProperty("status.delete.verifiedSucceed"));
+
+			}else {
+				return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), environment.getProperty("status.delete.verificationFailed"));
+			}
+			
+		} else {
+			return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"));
+		}
 	}
 	
 }
