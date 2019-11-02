@@ -18,7 +18,7 @@ import lombok.NonNull;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class UserData {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -52,10 +52,10 @@ public class User {
 	@Column(name = "time")
 	private long time;
 	
-	public User() {
+	public UserData() {
 	}
 	
-	public User(long id, String firstName, String lastName, String email, String password, LocalDateTime registeredDate,
+	public UserData(long id, String firstName, String lastName, String email, String password, LocalDateTime registeredDate,
 			LocalDateTime updatedDate, String reTypePassword, boolean verify, long time) {
 		super();
 		this.id = id;

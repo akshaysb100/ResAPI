@@ -20,7 +20,7 @@ import com.bridgelabz.fundoo.user.dto.ForgetPasswordDTO;
 import com.bridgelabz.fundoo.user.dto.LoginDTO;
 import com.bridgelabz.fundoo.user.dto.UpdateUserInformationDTO;
 import com.bridgelabz.fundoo.user.dto.UserDTO;
-import com.bridgelabz.fundoo.user.model.User;
+import com.bridgelabz.fundoo.user.model.UserData;
 import com.bridgelabz.fundoo.user.repository.UserRepository;
 import com.bridgelabz.fundoo.utility.Response;
 import com.bridgelabz.fundoo.utility.TokenUtil;
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response register(UserDTO userDto) throws UserDoesNotExistException {
 		 
-		Optional<User> userCheck = userRepository.findByEmail(userDto.getEmail());
+		Optional<UserData> userCheck = userRepository.findByEmail(userDto.getEmail());
 
 	   if(!userCheck.isPresent()) {
 			  
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 	    	
 	    	passwordEncode.encode(userDto.getPassword());
 	  
-	    	User user = modelMapper.map(userDto,User.class);
+	    	UserData user = modelMapper.map(userDto,UserData.class);
 	    	user.setRegisteredDate(LocalDateTime.now());
 			user.setUpdatedDate(LocalDateTime.now());
 			user.setTime(System.currentTimeMillis());
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response login(LoginDTO loginDTO)  throws UserDoesNotExistException {
 		
-		  Optional<User> userCheck = userRepository.findByEmail(loginDTO.getEmail());
+		  Optional<UserData> userCheck = userRepository.findByEmail(loginDTO.getEmail());
 		     
 		  if(!userCheck.isPresent()) {
 			
@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
 	public Response verifyUser(String token) throws VerificationFailedException {
 		
 		Long id = tokenutil.decodeToken(token);
-		Optional<User> verifyuser = userRepository.findById(id);
+		Optional<UserData> verifyuser = userRepository.findById(id);
 		
 		long time = ((System.currentTimeMillis()/1000)-(verifyuser.get().getTime()/1000));
 		System.out.println("time in second"+time);
@@ -168,7 +168,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Response forgetPassword(String email) throws UserDoesNotExistException {
-		Optional<User> checkEmail = userRepository.findByEmail(email);
+		Optional<UserData> checkEmail = userRepository.findByEmail(email);
         
 		if(checkEmail.isPresent()) {
 			
@@ -199,7 +199,7 @@ public class UserServiceImpl implements UserService {
 	public Response resetPassword(String token,ForgetPasswordDTO forgetPassword) throws VerificationFailedException {
 		
 		Long id = tokenutil.decodeToken(token);
-		Optional<User> verifyuser = userRepository.findById(id);
+		Optional<UserData> verifyuser = userRepository.findById(id);
 		  
 		String password = forgetPassword.getPassword();
 		String ConfirmPassword = forgetPassword.getConfirmPassword();
@@ -234,7 +234,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response updateUser(EmailPasswordDTO emailPasswordDTO) throws UserDoesNotExistException {
 
-		Optional<User> userCheck = userRepository.findByEmail(emailPasswordDTO.getEmail());
+		Optional<UserData> userCheck = userRepository.findByEmail(emailPasswordDTO.getEmail());
 
 		   if(userCheck.isPresent()) {
 				  
@@ -273,7 +273,7 @@ public class UserServiceImpl implements UserService {
 	public Response resetInformation(String token, UpdateUserInformationDTO userInfo) throws VerificationFailedException {
 		
 		Long id = tokenutil.decodeToken(token);
-		Optional<User> verifyuser = userRepository.findById(id);
+		Optional<UserData> verifyuser = userRepository.findById(id);
 		
 		long time = ((System.currentTimeMillis()/1000)-(verifyuser.get().getTime()/1000));	
 		
@@ -294,7 +294,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response deleteUser(EmailPasswordDTO emailPasswordDTO) throws UserDoesNotExistException {
 		
-		Optional<User> userCheck = userRepository.findByEmail(emailPasswordDTO.getEmail());
+		Optional<UserData> userCheck = userRepository.findByEmail(emailPasswordDTO.getEmail());
 
 		   if(userCheck.isPresent()) {
 				  
@@ -330,7 +330,7 @@ public class UserServiceImpl implements UserService {
 	public Response deleteVerifyUser(String token) throws VerificationFailedException {
 		
 		Long id = tokenutil.decodeToken(token);
-		Optional<User> verifyuser = userRepository.findById(id);
+		Optional<UserData> verifyuser = userRepository.findById(id);
 		
 		long time = ((System.currentTimeMillis()/1000)-(verifyuser.get().getTime()/1000));
 		
