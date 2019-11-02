@@ -1,8 +1,9 @@
 package com.bridgelabz.fundoo.note.model.service;
 
+import com.bridgelabz.fundoo.note.dto.NoteDTO;
 import com.bridgelabz.fundoo.utility.Response;
 
-public class NoteService {
+public interface NoteService {
 
-//	public Response createNote() ;
+	public Response create(NoteDTO noteDTO);
 }
