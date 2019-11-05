@@ -1,5 +1,6 @@
 package com.bridgelabz.fundoo.note.model.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -9,7 +10,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 
+import com.bridgelabz.fundoo.exception.FileStorageException;
+import com.bridgelabz.fundoo.exception.MyFileNotFoundException;
 import com.bridgelabz.fundoo.exception.NoteNotCreate;
 import com.bridgelabz.fundoo.exception.NoteNoteUpdate;
 import com.bridgelabz.fundoo.note.dto.NoteDTO;
@@ -161,5 +166,64 @@ public class NoteServiceImpl implements NoteService{
 	
 	}
 
+	@Override
+	public NoteData showdata(Long id) {
+
+		Optional<NoteData> showDAta = noteRepository.findById(id);
+		
+		if(showDAta.isPresent()) {
+			
+			return showDAta.get();
+		}
+		return null;
+	}
+
+	@Override
+	public NoteData storeFile(Long id,MultipartFile file)  {
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+		Optional<NoteData> addFile = noteRepository.findById(id);
+	//	NoteData noteData = modelMapper.map(addFile,NoteData.class);
+       
+        try {
+
+        	if(fileName.contains("..")) {
+             	throw new FileStorageException("note.not.upload.file");
+             }
+        	
+		//	noteData = new NoteData(fileName, file.getContentType(), file.getBytes());
+	        addFile.get().setFileName(fileName);
+	        addFile.get().setData(file.getBytes());
+	        addFile.get().setFileType(file.getContentType());
+			return noteRepository.save(addFile.get());
+			
+        } catch (IOException e) {
+			
+            throw new FileStorageException("Could not store file " + fileName + ". Please try again!");
+            
+        } 
+
+	}
+	
+	public NoteData getFile(Long fileId) {
+        return noteRepository.findById(fileId).orElseThrow(() -> new MyFileNotFoundException("File not found with id " + fileId));
+    }
+
+	@Override
+	public Response deleteFile(Long id) {
+		
+		Optional<NoteData> deleteFile = noteRepository.findById(id);
+
+		if(deleteFile.isPresent()) {
+			deleteFile.get().setFileName(null);
+			deleteFile.get().setFileType(null);
+			deleteFile.get().setData(null);
+			return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.file.delete.sucessfully"));
+
+		}else {
+            throw new FileStorageException("note.id.wrong");
+
+		}
+	
+	}
     
 }

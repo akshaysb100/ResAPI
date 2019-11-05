@@ -1,12 +1,14 @@
 package com.bridgelabz.fundoo.note.model;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -39,9 +41,25 @@ public class NoteData {
 	@Column(name = "archive",nullable = false)
 	private boolean archive;
 	
+	private String fileName;
+
+    private String fileType;
+
+    @Lob
+    private byte[] data;
+
 	public NoteData() {
 		
 	}
+
+	public NoteData(String fileName, String fileType, byte[] data) {
+		super();
+		this.fileName = fileName;
+		this.fileType = fileType;
+		this.data = data;
+	}
+
+
 
 	public NoteData(long id, String title, String description, LocalDateTime createdDate, LocalDateTime updatedDate,
 			boolean pinUnpinData, boolean trash, boolean archive) {
@@ -119,12 +137,38 @@ public class NoteData {
 	public void setArchive(boolean archive) {
 		this.archive = archive;
 	}
+    
+	
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public byte[] getData() {
+		return data;
+	}
+
+	public void setData(byte[] data) {
+		this.data = data;
+	}
 
 	@Override
 	public String toString() {
 		return "NoteData [id=" + id + ", title=" + title + ", description=" + description + ", CreatedDate="
 				+ CreatedDate + ", updatedDate=" + updatedDate + ", pinUnpinData=" + pinUnpinData + ", trash=" + trash
-				+ ", archive=" + archive + "]";
+				+ ", archive=" + archive + ", fileName=" + fileName + ", fileType=" + fileType + ", data="
+				+ Arrays.toString(data) + "]";
 	}
 
 }

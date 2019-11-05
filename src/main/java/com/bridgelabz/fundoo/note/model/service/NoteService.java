@@ -1,6 +1,9 @@
 package com.bridgelabz.fundoo.note.model.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.bridgelabz.fundoo.note.dto.NoteDTO;
+import com.bridgelabz.fundoo.note.model.NoteData;
 import com.bridgelabz.fundoo.utility.Response;
 
 public interface NoteService {
@@ -13,5 +16,8 @@ public interface NoteService {
 	public Response deleteNote(Long id);
 	public Response restoreData(Long id);
 	public Response archive(Long id);
+	public NoteData showdata(Long id);
+	public NoteData storeFile(Long id,MultipartFile file);
+	public Response deleteFile(Long id);
 	
 }
