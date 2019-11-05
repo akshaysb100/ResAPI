@@ -70,8 +70,6 @@ public class UserData {
 		this.time = time;
 	}
 
-
-
 	public long getId() {
 		return id;
 	}

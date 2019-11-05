@@ -21,14 +21,14 @@ public class GlobalException extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(VerificationFailedException.class)
 	public ResponseEntity<Response> existresponse(VerificationFailedException exception) {
-	Response exceptionresponse = new Response(HttpStatus.OK.value(),exception.getMessage());
+	Response exceptionresponse = new Response(LocalDateTime.now(),HttpStatus.OK.value(),exception.getMessage());
     System.out.println("exception : "+exception.getMessage());
 	return new ResponseEntity<Response>(exceptionresponse, HttpStatus.OK);
 	}
 	
 	@ExceptionHandler(UserDoesNotExistException.class)
 	public ResponseEntity<Response> existresponse(UserDoesNotExistException exception) {
-	Response exceptionresponse = new Response(HttpStatus.FORBIDDEN.value(),exception.getMessage());
+	Response exceptionresponse = new Response(LocalDateTime.now(),HttpStatus.FORBIDDEN.value(),exception.getMessage());
 
 	return new ResponseEntity<Response>(exceptionresponse, HttpStatus.FORBIDDEN);
 	}
@@ -43,5 +43,11 @@ public class GlobalException extends ResponseEntityExceptionHandler{
         ErrorResponse error = new ErrorResponse(LocalDateTime.now(), "Validation Failed", details);
         return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
     }	
+    
+    @ExceptionHandler(NoteNotCreate.class)
+	public ResponseEntity<Response> existresponse(NoteNotCreate exception) {
+	Response exceptionresponse = new Response(LocalDateTime.now(),HttpStatus.FORBIDDEN.value(),exception.getMessage());
+	return new ResponseEntity<Response>(exceptionresponse, HttpStatus.FORBIDDEN);
+	}
     
 }

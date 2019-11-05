@@ -29,14 +29,31 @@ public class NoteData {
 	
 	@Column(name = "updatedDate")
 	private LocalDateTime updatedDate;
+	
+	@Column(name = "pinUnpinData", nullable = false)
+	private boolean pinUnpinData;
+	
+	@Column(name = "trash",nullable = false)
+	private boolean trash;
+	
+	@Column(name = "archive",nullable = false)
+	private boolean archive;
+	
+	public NoteData() {
+		
+	}
 
-	public NoteData(long id, String title, String description, LocalDateTime createdDate, LocalDateTime updatedDate) {
+	public NoteData(long id, String title, String description, LocalDateTime createdDate, LocalDateTime updatedDate,
+			boolean pinUnpinData, boolean trash, boolean archive) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		CreatedDate = createdDate;
 		this.updatedDate = updatedDate;
+		this.pinUnpinData = pinUnpinData;
+		this.trash = trash;
+		this.archive = archive;
 	}
 
 	public long getId() {
@@ -79,10 +96,35 @@ public class NoteData {
 		this.updatedDate = updatedDate;
 	}
 
+	public boolean isPinUnpinData() {
+		return pinUnpinData;
+	}
+
+	public void setPinUnpinData(boolean pinUnpinData) {
+		this.pinUnpinData = pinUnpinData;
+	}
+ 	
+	public boolean isTrash() {
+		return trash;
+	}
+
+	public void setTrash(boolean trash) {
+		this.trash = trash;
+	}
+
+	public boolean isArchive() {
+		return archive;
+	}
+
+	public void setArchive(boolean archive) {
+		this.archive = archive;
+	}
+
 	@Override
 	public String toString() {
 		return "NoteData [id=" + id + ", title=" + title + ", description=" + description + ", CreatedDate="
-				+ CreatedDate + ", updatedDate=" + updatedDate + "]";
+				+ CreatedDate + ", updatedDate=" + updatedDate + ", pinUnpinData=" + pinUnpinData + ", trash=" + trash
+				+ ", archive=" + archive + "]";
 	}
-	
+
 }
