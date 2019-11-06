@@ -214,9 +214,11 @@ public class NoteServiceImpl implements NoteService{
 		Optional<NoteData> deleteFile = noteRepository.findById(id);
 
 		if(deleteFile.isPresent()) {
+			
 			deleteFile.get().setFileName(null);
 			deleteFile.get().setFileType(null);
 			deleteFile.get().setData(null);
+		    noteRepository.save(deleteFile.get());
 			return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.file.delete.sucessfully"));
 
 		}else {
