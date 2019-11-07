@@ -1,6 +1,5 @@
 package com.bridgelabz.fundoo.note.controller;
 
-import org.apache.tomcat.util.http.fileupload.UploadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -22,8 +21,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.bridgelabz.fundoo.note.dto.NoteDTO;
 import com.bridgelabz.fundoo.note.model.NoteData;
-import com.bridgelabz.fundoo.note.model.service.NoteServiceImpl;
 import com.bridgelabz.fundoo.note.payload.UploadFileResponse;
+import com.bridgelabz.fundoo.note.service.NoteServiceImpl;
 import com.bridgelabz.fundoo.utility.Response;
 
 @RestController
@@ -128,4 +127,6 @@ public class NoteController {
 		Response response = noteServiceImpl.deleteFile(id);
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
+	
+	
 }

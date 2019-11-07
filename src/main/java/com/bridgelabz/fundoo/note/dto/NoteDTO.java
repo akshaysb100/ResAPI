@@ -11,7 +11,7 @@ public class NoteDTO {
 		this.title = title;
 		this.description = description;
 	}
-
+  
 	public String getTitle() {
 		return title;
 	}

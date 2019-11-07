@@ -1,22 +1,28 @@
 package com.bridgelabz.fundoo.note.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.bridgelabz.fundoo.label.model.LabelModel;
 
 @Entity
 @Table(name = "note")
 public class NoteData {
  
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private long id;
 	
@@ -48,6 +54,9 @@ public class NoteData {
     @Lob
     private byte[] data;
 
+    @ManyToMany(cascade=CascadeType.ALL)
+    private List<LabelModel> labelId =new ArrayList<LabelModel>();
+
 	public NoteData() {
 		
 	}
@@ -59,20 +68,6 @@ public class NoteData {
 		this.data = data;
 	}
 
-
-
-	public NoteData(long id, String title, String description, LocalDateTime createdDate, LocalDateTime updatedDate,
-			boolean pinUnpinData, boolean trash, boolean archive) {
-		super();
-		this.id = id;
-		this.title = title;
-		this.description = description;
-		CreatedDate = createdDate;
-		this.updatedDate = updatedDate;
-		this.pinUnpinData = pinUnpinData;
-		this.trash = trash;
-		this.archive = archive;
-	}
 
 	public long getId() {
 		return id;
@@ -163,12 +158,21 @@ public class NoteData {
 		this.data = data;
 	}
 
+	public List<LabelModel> getLabelId() {
+		return labelId;
+	}
+
+	public void setLabelId(List<LabelModel> labelId) {
+		this.labelId = labelId;
+	}
+
 	@Override
 	public String toString() {
 		return "NoteData [id=" + id + ", title=" + title + ", description=" + description + ", CreatedDate="
 				+ CreatedDate + ", updatedDate=" + updatedDate + ", pinUnpinData=" + pinUnpinData + ", trash=" + trash
 				+ ", archive=" + archive + ", fileName=" + fileName + ", fileType=" + fileType + ", data="
-				+ Arrays.toString(data) + "]";
+				+ Arrays.toString(data) + ", labelId=" + labelId + "]";
 	}
 
+	
 }

@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.note.model.service;
+package com.bridgelabz.fundoo.note.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -17,6 +17,8 @@ import com.bridgelabz.fundoo.exception.FileStorageException;
 import com.bridgelabz.fundoo.exception.MyFileNotFoundException;
 import com.bridgelabz.fundoo.exception.NoteNotCreate;
 import com.bridgelabz.fundoo.exception.NoteNoteUpdate;
+import com.bridgelabz.fundoo.label.dto.LabelDTO;
+import com.bridgelabz.fundoo.label.model.LabelModel;
 import com.bridgelabz.fundoo.note.dto.NoteDTO;
 import com.bridgelabz.fundoo.note.model.NoteData;
 import com.bridgelabz.fundoo.note.repository.NoteRepository;
@@ -227,5 +229,23 @@ public class NoteServiceImpl implements NoteService{
 		}
 	
 	}
+
+//	@Override
+//	public Response addLabel(Long id, LabelDTO labelDto)  {
+//		
+//		LabelData label = modelMapper.map(labelDto, LabelData.class); 
+//		
+//		label.setCreatedDate(LocalDateTime.now());
+//		label.setUpdatedDate(LocalDateTime.now());
+//		
+//		Optional<NoteData> listData = noteRepository.findById(id);
+//		
+//		listData.get().getLabelDatas().add(label);
+//		listData.get().setUpdatedDate(LocalDateTime.now());
+//
+//		noteRepository.save(listData.get());
+//		
+//		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("label.created.sucessfully"));
+//	}
     
 }
