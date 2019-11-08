@@ -13,9 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.bridgelabz.fundoo.label.model.LabelModel;
+import com.bridgelabz.fundoo.user.model.UserData;
 
 @Entity
 @Table(name = "note")
@@ -59,7 +61,10 @@ public class NoteData {
 
     @ManyToMany(cascade=CascadeType.ALL)
     private List<LabelModel> labelId =new ArrayList<LabelModel>();
-
+    
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<UserData> collaborator;
+    
 	public NoteData() {
 		
 	}
@@ -169,13 +174,28 @@ public class NoteData {
 		this.labelId = labelId;
 	}
 
+	public Long getUserid() {
+		return userid;
+	}
+
+	public void setUserid(Long userid) {
+		this.userid = userid;
+	}
+
+	public List<UserData> getCollaborator() {
+		return collaborator;
+	}
+
+	public void setCollaborator(List<UserData> collaborator) {
+		this.collaborator = collaborator;
+	}
+
 	@Override
 	public String toString() {
 		return "NoteData [id=" + id + ", title=" + title + ", description=" + description + ", CreatedDate="
 				+ CreatedDate + ", updatedDate=" + updatedDate + ", pinUnpinData=" + pinUnpinData + ", trash=" + trash
-				+ ", archive=" + archive + ", fileName=" + fileName + ", fileType=" + fileType + ", data="
-				+ Arrays.toString(data) + ", labelId=" + labelId + "]";
+				+ ", archive=" + archive + ", userid=" + userid + ", fileName=" + fileName + ", fileType=" + fileType
+				+ ", data=" + Arrays.toString(data) + ", labelId=" + labelId + ", collaborator=" + collaborator + "]";
 	}
-
 	
 }

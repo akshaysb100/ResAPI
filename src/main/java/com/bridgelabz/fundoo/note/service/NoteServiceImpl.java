@@ -289,8 +289,46 @@ public class NoteServiceImpl implements NoteService{
 		noteList.get().getLabelId().remove(noteId);
 		labelRepository.delete(labelList);
 		noteRepository.save(noteList);   
-		return null;
+        return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), enviroment.getProperty("note.delete.success"), null);
 	}
+
+	@Override
+	public Response addCollaborator(Long noteId, String email, String token) {
+		
+		Long userId = tokenUtil.decodeToken(token);
+		
+		NoteData note = noteRepository.findByidAndUserid(noteId, userId);
+		
+		Optional<UserData> emailList = userRepository.findByEmail(email);
+			
+		if(emailList.isPresent() && note!=null) {
+		  
+			note.getCollaborator().add(emailList.get());
+			noteRepository.save(note);
+		 		
+	        return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), enviroment.getProperty("status.collaborator.add"), null);
+		}else {
+			
+            throw new FileStorageException("note.email.not.found");
+		}
+		
+	}
+
+	@Override
+	public Response deleteCollaborator(Long noteId, String email, String token) {
+		
+        Long userid = tokenUtil.decodeToken(token);
+        
+        Optional<UserData> emailList = userRepository.findByEmail(email);
+        
+        NoteData collaboraterList = noteRepository.findByidAndUserid(noteId, userid);
+        
+        collaboraterList.getCollaborator().remove(emailList.get());
+        noteRepository.save(collaboraterList);
+        
+        return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), enviroment.getProperty("status.collaborator.delete"), null);
+	}
+	
 
 //	@Override
 //	public Response addLabel(Long id, LabelDTO labelDto)  {

@@ -2,8 +2,6 @@ package com.bridgelabz.fundoo.note.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bridgelabz.fundoo.label.dto.LabelDTO;
-import com.bridgelabz.fundoo.label.model.LabelModel;
 import com.bridgelabz.fundoo.note.dto.NoteDTO;
 import com.bridgelabz.fundoo.note.model.NoteData;
 import com.bridgelabz.fundoo.utility.Response;
@@ -23,4 +21,6 @@ public interface NoteService {
 	public Response deleteFile(Long id);
 	//public Response addLabel(Long id, LabelDTO labelDto);
 	public Response deleLabelforever(Long labelID,Long noteId);
+	public Response addCollaborator(Long noteId,String email,String token);
+	public Response deleteCollaborator(Long noteId,String email,String token);
 }

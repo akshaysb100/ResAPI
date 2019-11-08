@@ -138,5 +138,17 @@ public class NoteController {
 		 
 	 }
 	
+	@PostMapping("/addCollaborator")
+	public ResponseEntity<Response> addCollaborator(@RequestParam Long noteId,@RequestParam String email,@RequestParam String token){
+		
+		Response response = noteServiceImpl.addCollaborator(noteId, email, token);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
+		
+	}
 	
+	public ResponseEntity<Response> deleteCollaborator(@RequestParam Long noteId,@RequestParam String email,@RequestParam String token){
+		
+		Response response = noteServiceImpl.deleteCollaborator(noteId, email, token);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	}
 }

@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import com.bridgelabz.fundoo.note.model.NoteData;
 
 
-
 @Entity
 @Table(name = "user")
 public class UserData {
