@@ -10,9 +10,9 @@ import com.bridgelabz.fundoo.utility.Response;
 
 public interface NoteService {
 
-	public Response createNote(NoteDTO noteDTO);
-	public Response updateNote(Long id,NoteDTO noteDTO);
-	public Response deleteNotForever(Long id);
+	public Response createNote(NoteDTO noteDTO,String token);
+	public Response updateNote(Long id,NoteDTO noteDTO,String token);
+	public Response deleteNotForever(Long id,String token);
 	public Response makeCopy(Long id);
 	public Response pinUnpin(Long id);
 	public Response deleteNote(Long id);
@@ -22,5 +22,5 @@ public interface NoteService {
 	public NoteData storeFile(Long id,MultipartFile file);
 	public Response deleteFile(Long id);
 	//public Response addLabel(Long id, LabelDTO labelDto);
-	
+	public Response deleLabelforever(Long labelID,Long noteId);
 }

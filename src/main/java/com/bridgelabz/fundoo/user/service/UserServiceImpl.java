@@ -48,7 +48,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JavaMailSender javaMailSender;
     
-	
 	/**
 	 *purpose : this function used for Register user information and create token for email verification
 	 */
@@ -76,11 +75,11 @@ public class UserServiceImpl implements UserService {
 			mailMessage.setFrom("akshaybavalekar100@gmail.com");
 			mailMessage.setSubject("valid user check");
 			
-			String token = tokenutil.createToken(user.getId());
+			String token = tokenutil.createToken(user.getUserid());
 			mailMessage.setText("verification link " + " http://192.168.0.140:8080/users/verrifyUser/" + token);
 			javaMailSender.send(mailMessage);
 			
-	    	return new Response (LocalDateTime.now(),HttpStatus.OK.value(),environment.getProperty("status.register.success"));
+	    	return new Response (LocalDateTime.now(),HttpStatus.OK.value(),environment.getProperty("status.register.success"),token);
              
 	        }else {
 	        	 throw new UserDoesNotExistException(environment.getProperty("status.register.incorrectpassword"));
@@ -101,19 +100,21 @@ public class UserServiceImpl implements UserService {
 		  Optional<UserData> userCheck = userRepository.findByEmail(loginDTO.getEmail());
 		     
 		  if(!userCheck.isPresent()) {
-			
+	
 			  throw new UserDoesNotExistException(environment.getProperty("status.login.userexist"));
 		  
 		  }else if(userCheck.get().getPassword().equals(loginDTO.getPassword())) {
-				
-			  throw new UserDoesNotExistException(environment.getProperty("status.login.success"));
-			
+			  
+			  String token = tokenutil.createToken(userCheck.get().getUserid());
+              System.out.println(token);
+			  return new Response(LocalDateTime.now(),HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.success"),token);
+
 		  }else if(!userCheck.get().getPassword().equals(loginDTO.getPassword())) {
-				
-			  return new Response(LocalDateTime.now(),HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.incorrectpassword"));
+			  
+			  throw new UserDoesNotExistException(environment.getProperty("status.login.incorrectpassword"));
 		  }else {
-				
-			   return new Response(LocalDateTime.now(),HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.usernotexit"));
+			  
+			  throw new UserDoesNotExistException(environment.getProperty("status.login.usernotexit"));
 			}
 
 	}
@@ -140,7 +141,7 @@ public class UserServiceImpl implements UserService {
 					throw new VerificationFailedException(environment.getProperty("status.login.verifiedSucceed"));
 
 			}else {
-				return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), environment.getProperty("status.login.verificationFailed"));
+				return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), environment.getProperty("status.login.verificationFailed"),null);
 			}
 			
 		} else {
@@ -157,7 +158,7 @@ public class UserServiceImpl implements UserService {
 			 verifyuser.get().setVerify(false);
 			 userRepository.save(verifyuser.get());
 			
-			return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"));
+			return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"),null);
 		}
 		
 	}
@@ -180,13 +181,13 @@ public class UserServiceImpl implements UserService {
 			mailMessage.setTo(email);
 			mailMessage.setFrom("akshaybavalekar100@gmail.com");
 			mailMessage.setSubject("valid user check");
-			String token = tokenutil.createToken(checkEmail.get().getId());
+			String token = tokenutil.createToken(checkEmail.get().getUserid());
 			mailMessage.setText("verification link " + "http://192.168.0.140:8080/users/resetPassword/" + token);
 			javaMailSender.send(mailMessage);
 			
 			  throw new UserDoesNotExistException(environment.getProperty("status.user.exists"));
 		}else {
-			   return new Response(LocalDateTime.now(),HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.usernotexit"));
+			   return new Response(LocalDateTime.now(),HttpStatus.UNAUTHORIZED.value(),environment.getProperty("status.login.usernotexit"),null);
 		}
 	
 	}
@@ -218,11 +219,11 @@ public class UserServiceImpl implements UserService {
 					 throw new VerificationFailedException(environment.getProperty("status.update.password"));
 
 				 }else {
-					return new Response(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), environment.getProperty("status.resetpassword.incorrectpassword"));
+					return new Response(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), environment.getProperty("status.resetpassword.incorrectpassword"),null);
 				}
 				
 			} else {
-				return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"));
+				return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"),null);
 			}			
 	}
 
@@ -249,11 +250,11 @@ public class UserServiceImpl implements UserService {
 				mailMessage.setFrom("akshaybavalekar100@gmail.com");
 				mailMessage.setSubject("valid user check");
 				
-				String token = tokenutil.createToken(userCheck.get().getId());
+				String token = tokenutil.createToken(userCheck.get().getUserid());
 				mailMessage.setText("verification link " + " http://192.168.0.140:8080/users/resetInformation/" + token);
 				javaMailSender.send(mailMessage);
 				
-		    	return new Response (LocalDateTime.now(),HttpStatus.OK.value(),environment.getProperty("status.Update.process"));
+		    	return new Response (LocalDateTime.now(),HttpStatus.OK.value(),environment.getProperty("status.Update.process"),null);
 	             
 		        }else {
 		        	 throw new UserDoesNotExistException(environment.getProperty("status.Update.incorrectpassword"));
@@ -286,7 +287,7 @@ public class UserServiceImpl implements UserService {
 			 throw new VerificationFailedException(environment.getProperty("status.update.password"));
 					 
 			} else {
-				return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"));
+				return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"),null);
 			}		
 	}
 
@@ -309,11 +310,11 @@ public class UserServiceImpl implements UserService {
 				mailMessage.setFrom("akshaybavalekar100@gmail.com");
 				mailMessage.setSubject("valid user check");
 				
-				String token = tokenutil.createToken(userCheck.get().getId());
+				String token = tokenutil.createToken(userCheck.get().getUserid());
 				mailMessage.setText("verification link " + " http://192.168.0.140:8080/users/deleteVerifyUser/" + token);
 				javaMailSender.send(mailMessage);
 				
-		    	return new Response (LocalDateTime.now(),HttpStatus.OK.value(),environment.getProperty("status.delete.process"));
+		    	return new Response (LocalDateTime.now(),HttpStatus.OK.value(),environment.getProperty("status.delete.process"),null);
 	             
 		        }else {
 		        	 throw new UserDoesNotExistException(environment.getProperty("status.delete.incorrectpassword"));
@@ -338,15 +339,15 @@ public class UserServiceImpl implements UserService {
 			
 			if(verifyuser.isPresent())
 			{
-					userRepository.deleteById(verifyuser.get().getId());
+					userRepository.deleteById(verifyuser.get().getUserid());
 					throw new VerificationFailedException(environment.getProperty("status.delete.verifiedSucceed"));
 
 			}else {
-				return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), environment.getProperty("status.delete.verificationFailed"));
+				return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), environment.getProperty("status.delete.verificationFailed"),null);
 			}
 			
 		} else {
-			return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"));
+			return new Response(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), environment.getProperty("status.token.timeout"),null);
 		}
 	}
 	

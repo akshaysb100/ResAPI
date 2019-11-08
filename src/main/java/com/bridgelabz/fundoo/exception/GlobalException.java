@@ -28,9 +28,9 @@ public class GlobalException extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(UserDoesNotExistException.class)
 	public ResponseEntity<Response> existresponse(UserDoesNotExistException exception) {
-	Response exceptionresponse = new Response(LocalDateTime.now(),HttpStatus.FORBIDDEN.value(),exception.getMessage());
+	Response exceptionresponse = new Response(LocalDateTime.now(),HttpStatus.OK.value(),exception.getMessage());
 
-	return new ResponseEntity<Response>(exceptionresponse, HttpStatus.FORBIDDEN);
+	return new ResponseEntity<Response>(exceptionresponse, HttpStatus.OK);
 	}
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

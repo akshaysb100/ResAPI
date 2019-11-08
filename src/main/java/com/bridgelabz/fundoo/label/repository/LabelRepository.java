@@ -10,8 +10,6 @@ import com.bridgelabz.fundoo.label.model.LabelModel;
 @Repository
 public interface LabelRepository extends JpaRepository<LabelModel, Long>{
 	
-	//public Optional<LabelModel> finByLabelId(Long labelId);
-	
 	public LabelModel findByLabelId(Long Id);
 
 }

@@ -19,15 +19,22 @@ import com.bridgelabz.fundoo.exception.NoteNotCreate;
 import com.bridgelabz.fundoo.exception.NoteNoteUpdate;
 import com.bridgelabz.fundoo.label.dto.LabelDTO;
 import com.bridgelabz.fundoo.label.model.LabelModel;
+import com.bridgelabz.fundoo.label.repository.LabelRepository;
 import com.bridgelabz.fundoo.note.dto.NoteDTO;
 import com.bridgelabz.fundoo.note.model.NoteData;
 import com.bridgelabz.fundoo.note.repository.NoteRepository;
+import com.bridgelabz.fundoo.user.model.UserData;
+import com.bridgelabz.fundoo.user.repository.UserRepository;
 import com.bridgelabz.fundoo.utility.Response;
+import com.bridgelabz.fundoo.utility.TokenUtil;
 
 @PropertySource(name = "note",value = {"classpath:noteresponse.properties"})
 @Service
 public class NoteServiceImpl implements NoteService{
 
+	@Autowired
+	private LabelRepository labelRepository;
+	
 	@Autowired
 	private NoteRepository noteRepository;
 	
@@ -37,53 +44,95 @@ public class NoteServiceImpl implements NoteService{
 	@Autowired
 	private Environment enviroment;
 	
+	@Autowired
+	private TokenUtil tokenUtil;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
 	@Override
-	public Response createNote(NoteDTO noteDTO) throws NoteNotCreate {
+	public Response createNote(NoteDTO noteDTO,String token) throws NoteNotCreate {
+		
+		Long userid = tokenUtil.decodeToken(token);
+		
+		Optional<UserData> emailList = userRepository.findById(userid);
 		
 		String titel = noteDTO.getTitle();
 		String description = noteDTO.getDescription();
 		
-		if((titel!=null && !titel.isEmpty()) || (description!=null && !description.isEmpty())) {
-		
-			NoteData note = modelMapper.map(noteDTO, NoteData.class);
-			note.setCreatedDate(LocalDateTime.now());
-			note.setUpdatedDate(LocalDateTime.now());
-			noteRepository.save(note);
-			return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.created"));
+		if(emailList.isPresent()) {
+			
+			if((titel!=null && !titel.isEmpty()) || (description!=null && !description.isEmpty())) {
+				
+				NoteData note = modelMapper.map(noteDTO, NoteData.class);
+				note.setCreatedDate(LocalDateTime.now());
+				note.setUpdatedDate(LocalDateTime.now());
+				noteRepository.save(note);
+				
+				emailList.get().getNoteID().add(note);
+				userRepository.save(emailList.get());
+				
+				return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.created"),null);
+			}else {
+				throw new NoteNotCreate(enviroment.getProperty("note.not.created"));
+			}
+			
 		}else {
-			throw new NoteNotCreate(enviroment.getProperty("note.not.created"));
-		}
+			throw new NoteNotCreate(enviroment.getProperty("status.create.usernotexit"));
+	 }
+		
 		
 	}
 	
 	@Override
-	public Response updateNote(Long id,NoteDTO noteDTO) {
+	public Response updateNote(Long id,NoteDTO noteDTO,String token) {
   		
+		Long userId = tokenUtil.decodeToken(token);
+		
+		Optional<UserData> userIdList = userRepository.findById(userId); 
+		
 		Optional<NoteData> updateNote = noteRepository.findById(id);
-		if(updateNote !=null ) {
+		
+		if(userIdList.isPresent()) {
 			
-			updateNote.get().setTitle(noteDTO.getTitle());
-			updateNote.get().setDescription(noteDTO.getDescription());
-			updateNote.get().setUpdatedDate(LocalDateTime.now());
-			noteRepository.save(updateNote.get());
-			
-			return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.update.sucessfully"));
+			if(updateNote !=null ) {
+				
+				updateNote.get().setTitle(noteDTO.getTitle());
+				updateNote.get().setDescription(noteDTO.getDescription());
+				updateNote.get().setUpdatedDate(LocalDateTime.now());
+				noteRepository.save(updateNote.get());
+				
+//				userIdList.get().getNoteID().set(Integer.valueOf(id.intValue()), updateNote.get());
+//				userRepository.save(userIdList.get());
+				
+				return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.update.sucessfully"),null);
+			}else {
+				throw new NoteNotCreate(enviroment.getProperty("note.not.updated"));
+			}
 		}else {
-			throw new NoteNotCreate(enviroment.getProperty("note.not.updated"));
+			throw new NoteNotCreate(enviroment.getProperty("status.create.usernotexit"));
 		}
+	
 
 	}
 
 	@Override
-	public Response deleteNotForever(Long id) {
+	public Response deleteNotForever(Long id,String token) {
+		
+		Long userId = tokenUtil.decodeToken(token);
+		
+		Optional<UserData> userIdList = userRepository.findById(userId);
 		
 		Optional<NoteData> deleteNote= noteRepository.findById(id);
 		if(deleteNote!=null) {
 
 			if(id == deleteNote.get().getId()) {
 		
+				userIdList.get().getNoteID().remove(deleteNote.get());
+				userRepository.save(userIdList.get());
 				noteRepository.deleteById(id);
-				return new Response(LocalDateTime.now(),HttpStatus.OK.value(),enviroment.getProperty("note.delete.success"));
+				
+				return new Response(LocalDateTime.now(),HttpStatus.OK.value(),enviroment.getProperty("note.delete.success"),null);
 			}else {
 				throw new NoteNoteUpdate(enviroment.getProperty("note.not.delete"));
 			}
@@ -105,7 +154,7 @@ public class NoteServiceImpl implements NoteService{
 		noteData.setCreatedDate(LocalDateTime.now());
 		noteData.setUpdatedDate(LocalDateTime.now());
 		noteRepository.save(noteData);
-		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.copy.same"));
+		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.copy.same"),null);
 	}
 
 	@Override
@@ -123,7 +172,7 @@ public class NoteServiceImpl implements NoteService{
         	noteRepository.save(pinData.get());
         }
 	
-		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.pin.update"));
+		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.pin.update"),null);
 	}
 
 	@Override
@@ -133,7 +182,7 @@ public class NoteServiceImpl implements NoteService{
 		   
 		deleteData.get().setTrash(true);
         noteRepository.save(deleteData.get());
-		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.trashed"));
+		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.trashed"),null);
 	
 	}
 
@@ -144,7 +193,7 @@ public class NoteServiceImpl implements NoteService{
 		   
 		deleteData.get().setTrash(false);
         noteRepository.save(deleteData.get());
-		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.restore"));
+		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.restore"),null);
 		
 	}
 
@@ -158,11 +207,11 @@ public class NoteServiceImpl implements NoteService{
         if(value == false) {
         	archiveData.get().setArchive(true);
         	noteRepository.save(archiveData.get());
-    		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.archive"));
+    		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.archive"),null);
         }else {
         	archiveData.get().setArchive(false);
         	noteRepository.save(archiveData.get());
-    		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.unArchive"));
+    		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.unArchive"),null);
 
         }
 	
@@ -221,13 +270,26 @@ public class NoteServiceImpl implements NoteService{
 			deleteFile.get().setFileType(null);
 			deleteFile.get().setData(null);
 		    noteRepository.save(deleteFile.get());
-			return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.file.delete.sucessfully"));
+			return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.file.delete.sucessfully"),null);
 
 		}else {
             throw new FileStorageException("note.id.wrong");
 
 		}
 	
+	}
+
+	@Override
+	public Response deleLabelforever(Long labelID, Long noteId) {
+        
+		Optional<NoteData> noteList = noteRepository.findById(noteId);
+		
+		LabelModel labelList = labelRepository.findByLabelId(labelID);
+		
+		noteList.get().getLabelId().remove(noteId);
+		labelRepository.delete(labelList);
+		noteRepository.save(noteList);   
+		return null;
 	}
 
 //	@Override

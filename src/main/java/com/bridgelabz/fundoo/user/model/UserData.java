@@ -1,20 +1,21 @@
 package com.bridgelabz.fundoo.user.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
+import com.bridgelabz.fundoo.note.model.NoteData;
 
-import lombok.NonNull;
+
 
 @Entity
 @Table(name = "user")
@@ -22,8 +23,8 @@ public class UserData {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	private long id;
+	@Column(name = "userid")
+	private long userid;
 	
 	@Column(name = "firstName")
 	private String firstName;
@@ -52,13 +53,17 @@ public class UserData {
 	@Column(name = "time")
 	private long time;
 	
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<NoteData> noteID = new ArrayList<NoteData>();
+	
 	public UserData() {
 	}
-	
-	public UserData(long id, String firstName, String lastName, String email, String password, LocalDateTime registeredDate,
-			LocalDateTime updatedDate, String reTypePassword, boolean verify, long time) {
+
+	public UserData(long userid, String firstName, String lastName, String email, String password,
+			LocalDateTime registeredDate, LocalDateTime updatedDate, String reTypePassword, boolean verify, long time,
+			List<NoteData> noteID) {
 		super();
-		this.id = id;
+		this.userid = userid;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
@@ -68,14 +73,16 @@ public class UserData {
 		this.reTypePassword = reTypePassword;
 		this.verify = verify;
 		this.time = time;
+		this.noteID = noteID;
 	}
 
-	public long getId() {
-		return id;
-	}
 
-	public void setId(long id) {
-		this.id = id;
+	public long getUserid() {
+		return userid;
+	}
+	
+	public void setUserid(long userid) {
+		this.userid = userid;
 	}
 
 	public String getFirstName() {
@@ -148,6 +155,22 @@ public class UserData {
 
 	public void setTime(long time) {
 		this.time = time;
+	}
+
+	public List<NoteData> getNoteID() {
+		return noteID;
+	}
+
+	public void setNoteID(List<NoteData> noteID) {
+		this.noteID = noteID;
+	}
+
+	@Override
+	public String toString() {
+		return "UserData [userid=" + userid + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", password=" + password + ", registeredDate=" + registeredDate + ", updatedDate=" + updatedDate
+				+ ", reTypePassword=" + reTypePassword + ", verify=" + verify + ", time=" + time + ", noteID=" + noteID
+				+ "]";
 	}
 	
 }

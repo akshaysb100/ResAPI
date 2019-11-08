@@ -28,9 +28,6 @@ public class LabelModel {
 	@Column(name = "updatedDate")                                                                  
 	private LocalDateTime updatedDate;                                                             
    
-	@Column(name = "id")
-	private Long id;
-
 	public Long getLabelId() {
 		return labelId;
 	}
@@ -63,18 +60,10 @@ public class LabelModel {
 		this.updatedDate = updatedDate;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	@Override
 	public String toString() {
 		return "LabelModel [labelId=" + labelId + ", labelName=" + labelName + ", createdDate=" + createdDate
-				+ ", updatedDate=" + updatedDate + ", id=" + id + "]";
+				+ ", updatedDate=" + updatedDate + "]";
 	}
 
 }                                                                                                  

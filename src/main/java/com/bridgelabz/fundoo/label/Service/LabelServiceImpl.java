@@ -34,42 +34,70 @@ public class LabelServiceImpl implements LabelService {
 	
 	
 	@Override
-	public Response addLabel(Long id, LabelsDTO labelDTO) {
+	public Response addLabelWithNote(Long id, LabelsDTO labelDTO) {
 		
-		System.out.println("data of label : "+labelDTO);
+		
         LabelModel label = modelMapper.map(labelDTO, LabelModel.class); 
         Optional<NoteData> listData = noteRepository.findById(id);
-      
-        System.out.println(listData);
-        label.setId(id);
-		label.setCreatedDate(LocalDateTime.now());
-		label.setUpdatedDate(LocalDateTime.now());
-		labelRepository.save(label);
-		
-		listData.get().getLabelId().add(label);
-		listData.get().setUpdatedDate(LocalDateTime.now());
-		
-		noteRepository.save(listData.get());
-		
-		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("label.created.successfully"));
-	
-	
+        
+        if(listData.isPresent()) {
+        //	label.setId(id);
+    		label.setCreatedDate(LocalDateTime.now());
+    		label.setUpdatedDate(LocalDateTime.now());
+    		labelRepository.save(label);
+    		
+    		listData.get().getLabelId().add(label);
+    		listData.get().setUpdatedDate(LocalDateTime.now());
+    		
+    		noteRepository.save(listData.get());
+    		
+    		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("label.created.successfully"),null);
+        }
+        
+		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("label.note.not."),null);
+
       }
 
 
 	@Override
 	public Response deleteLabel(Long labelId) {
 		
-	//	Optional<LabelModel> deleteLabel = labelRepository.finByLabelId(labelId);
+		Optional<NoteData> listOfNote = noteRepository.findById(labelId);
 		
-		// noteRepository.deleteById(deleteLabel.get().getId());;
+		LabelModel label = labelRepository.findByLabelId(labelId);
 		
-		//LabelModel label = labelRepository.findByLabelId(labelId);
+		listOfNote.get().getLabelId().remove(label);
 		
-		
+		noteRepository.save(listOfNote.get());
+        
 		labelRepository.deleteById(labelId);
-		//noteRepository.save(addFile)
-		
 		return null;
+	}
+
+
+	@Override
+	public Response addOldLabel(Long labelID, Long noteId) {
+		
+		Optional<NoteData> listOfNote = noteRepository.findById(noteId);
+		LabelModel listOfLabel = labelRepository.findByLabelId(labelID);
+		
+		//listOfLabel.setId(labelID);
+		listOfNote.get().getLabelId().add(listOfLabel);
+		noteRepository.save(listOfNote.get());
+		
+		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("label.created.successfully"),null);
+	}
+
+
+	@Override
+	public Response addLabel(LabelsDTO labelsDTO) {
+		
+		LabelModel newLabel = modelMapper.map(labelsDTO, LabelModel.class);
+		
+		newLabel.setCreatedDate(LocalDateTime.now());
+		newLabel.setUpdatedDate(LocalDateTime.now());
+		labelRepository.save(newLabel);
+		
+		return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("label.created.successfully"),null);
 	}
 }

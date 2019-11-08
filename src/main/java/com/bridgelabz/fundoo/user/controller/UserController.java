@@ -98,7 +98,10 @@ public class UserController {
 	 
 	 @RequestMapping("/deleteVerifyUser/{token}")
 	 public ResponseEntity<Response> deleteVerifyUser(@PathVariable String token)throws VerificationFailedException{
+		 
 		 Response response = userService.deleteVerifyUser(token);
 		 return new ResponseEntity<Response>(response,HttpStatus.OK);
 	 }
+	 
+	 
 }

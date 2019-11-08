@@ -47,6 +47,9 @@ public class NoteData {
 	@Column(name = "archive",nullable = false)
 	private boolean archive;
 	
+	@Column(name = "userid")
+	private Long userid;
+	
 	private String fileName;
 
     private String fileType;

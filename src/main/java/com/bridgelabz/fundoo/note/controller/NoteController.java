@@ -33,23 +33,23 @@ public class NoteController {
 	private NoteServiceImpl noteServiceImpl;
 	
 	@PostMapping(value = "/createNote")
-	public ResponseEntity<Response> create(@RequestBody NoteDTO noteDTO){
+	public ResponseEntity<Response> create(@RequestBody NoteDTO noteDTO,@RequestParam String token){
 		
-		Response response = noteServiceImpl.createNote(noteDTO);
+		Response response = noteServiceImpl.createNote(noteDTO,token);
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}  
 	
 	@PutMapping(value = "/updateNote/{id}")
-	public ResponseEntity<Response> updateNote(@PathVariable Long id,@RequestBody NoteDTO noteDTO){
+	public ResponseEntity<Response> updateNote(@PathVariable Long id,@RequestBody NoteDTO noteDTO,String token){
 		
-		Response response = noteServiceImpl.updateNote(id,noteDTO);
+		Response response = noteServiceImpl.updateNote(id,noteDTO,token);
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/deleteNoteForever")
-	public ResponseEntity<Response> deleteNoteForever(@RequestParam Long id){
+	public ResponseEntity<Response> deleteNoteForever(@RequestParam Long id,String token){
 	    
-		Response response = noteServiceImpl.deleteNotForever(id);
+		Response response = noteServiceImpl.deleteNotForever(id,token);
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
 	
@@ -127,6 +127,16 @@ public class NoteController {
 		Response response = noteServiceImpl.deleteFile(id);
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
+	
+	@DeleteMapping("/deleteLabelForever")
+	public ResponseEntity<Response> deleLabelforever(@RequestParam Long labelID,@RequestParam Long noteId){
+		 
+		 Response response = noteServiceImpl.deleLabelforever(labelID, noteId);
+		 
+		 return new ResponseEntity<Response>(response,HttpStatus.OK);
+		 
+		 
+	 }
 	
 	
 }
