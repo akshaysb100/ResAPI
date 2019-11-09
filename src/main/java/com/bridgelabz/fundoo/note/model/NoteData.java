@@ -25,8 +25,8 @@ public class NoteData {
  
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private long id;
+	@Column(name = "noteId")
+	private long noteId;
 	
 	@Column(name = "title")
 	private String title;
@@ -34,7 +34,7 @@ public class NoteData {
 	@Column(name = "description")
 	private String description;
 
-	@Column(name = "CreatedDate")
+	@Column(name = "createdDate")
 	private LocalDateTime CreatedDate;
 	
 	@Column(name = "updatedDate")
@@ -50,7 +50,7 @@ public class NoteData {
 	private boolean archive;
 	
 	@Column(name = "userid")
-	private Long userid;
+	private long userId;
 	
 	private String fileName;
 
@@ -60,29 +60,17 @@ public class NoteData {
     private byte[] data;
 
     @ManyToMany(cascade=CascadeType.ALL)
-    private List<LabelModel> labelId =new ArrayList<LabelModel>();
+    private List<LabelModel> labelList =new ArrayList<LabelModel>();
     
     @OneToMany(cascade = CascadeType.ALL)
     private List<UserData> collaborator;
-    
-	public NoteData() {
-		
+
+	public long getNoteId() {
+		return noteId;
 	}
 
-	public NoteData(String fileName, String fileType, byte[] data) {
-		super();
-		this.fileName = fileName;
-		this.fileType = fileType;
-		this.data = data;
-	}
-
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
+	public void setNoteId(long noteId) {
+		this.noteId = noteId;
 	}
 
 	public String getTitle() {
@@ -124,7 +112,7 @@ public class NoteData {
 	public void setPinUnpinData(boolean pinUnpinData) {
 		this.pinUnpinData = pinUnpinData;
 	}
- 	
+
 	public boolean isTrash() {
 		return trash;
 	}
@@ -140,8 +128,15 @@ public class NoteData {
 	public void setArchive(boolean archive) {
 		this.archive = archive;
 	}
-    
-	
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+
 	public String getFileName() {
 		return fileName;
 	}
@@ -167,19 +162,11 @@ public class NoteData {
 	}
 
 	public List<LabelModel> getLabelId() {
-		return labelId;
+		return labelList;
 	}
 
 	public void setLabelId(List<LabelModel> labelId) {
-		this.labelId = labelId;
-	}
-
-	public Long getUserid() {
-		return userid;
-	}
-
-	public void setUserid(Long userid) {
-		this.userid = userid;
+		this.labelList = labelId;
 	}
 
 	public List<UserData> getCollaborator() {
@@ -192,10 +179,12 @@ public class NoteData {
 
 	@Override
 	public String toString() {
-		return "NoteData [id=" + id + ", title=" + title + ", description=" + description + ", CreatedDate="
+		return "NoteData [noteId=" + noteId + ", title=" + title + ", description=" + description + ", CreatedDate="
 				+ CreatedDate + ", updatedDate=" + updatedDate + ", pinUnpinData=" + pinUnpinData + ", trash=" + trash
-				+ ", archive=" + archive + ", userid=" + userid + ", fileName=" + fileName + ", fileType=" + fileType
-				+ ", data=" + Arrays.toString(data) + ", labelId=" + labelId + ", collaborator=" + collaborator + "]";
+				+ ", archive=" + archive + ", userId=" + userId + ", fileName=" + fileName + ", fileType=" + fileType
+				+ ", data=" + Arrays.toString(data) + ", labelId=" + labelList + ", collaborator=" + collaborator + "]";
 	}
+    
+	
 	
 }

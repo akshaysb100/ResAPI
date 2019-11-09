@@ -10,10 +10,10 @@ import com.bridgelabz.fundoo.note.model.NoteData;
 @Repository
 public interface NoteRepository extends JpaRepository<NoteData, Long>{
 
-	public Optional<NoteData> findById(Long id);
+	public Optional<NoteData> findBynoteId(long id);
 	
 	public NoteData save(Optional<NoteData> addFile);
 	
-	public NoteData findByidAndUserid(Long noteid,Long userid);
-	
+	public NoteData findByNoteIdAndUserId(long noteId,long userId)
+;	
 }

@@ -102,7 +102,7 @@ public class NoteController {
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
-                .path(Long.toString(dbFile.getId()))
+                .path(Long.toString(dbFile.getNoteId()))
                 .toUriString();
 
         return new UploadFileResponse(dbFile.getFileName(), fileDownloadUri,
@@ -146,6 +146,7 @@ public class NoteController {
 		
 	}
 	
+	@DeleteMapping("/deleteCollaborator")
 	public ResponseEntity<Response> deleteCollaborator(@RequestParam Long noteId,@RequestParam String email,@RequestParam String token){
 		
 		Response response = noteServiceImpl.deleteCollaborator(noteId, email, token);

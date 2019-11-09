@@ -17,7 +17,6 @@ import com.bridgelabz.fundoo.exception.FileStorageException;
 import com.bridgelabz.fundoo.exception.MyFileNotFoundException;
 import com.bridgelabz.fundoo.exception.NoteNotCreate;
 import com.bridgelabz.fundoo.exception.NoteNoteUpdate;
-import com.bridgelabz.fundoo.label.dto.LabelDTO;
 import com.bridgelabz.fundoo.label.model.LabelModel;
 import com.bridgelabz.fundoo.label.repository.LabelRepository;
 import com.bridgelabz.fundoo.note.dto.NoteDTO;
@@ -55,22 +54,24 @@ public class NoteServiceImpl implements NoteService{
 		
 		Long userid = tokenUtil.decodeToken(token);
 		
-		Optional<UserData> emailList = userRepository.findById(userid);
+		Optional<UserData> user = userRepository.findById(userid);
 		
-		String titel = noteDTO.getTitle();
+		String title = noteDTO.getTitle();
 		String description = noteDTO.getDescription();
 		
-		if(emailList.isPresent()) {
+		if(user.isPresent()) {
 			
-			if((titel!=null && !titel.isEmpty()) || (description!=null && !description.isEmpty())) {
+			if((title!=null && !title.isEmpty()) || (description!=null && !description.isEmpty())) {
+				
 				
 				NoteData note = modelMapper.map(noteDTO, NoteData.class);
+				note.setUserId(user.get().getUserid());
 				note.setCreatedDate(LocalDateTime.now());
 				note.setUpdatedDate(LocalDateTime.now());
 				noteRepository.save(note);
 				
-				emailList.get().getNoteID().add(note);
-				userRepository.save(emailList.get());
+				user.get().getNoteList().add(note);
+				userRepository.save(user.get());
 				
 				return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.created"),null);
 			}else {
@@ -102,9 +103,6 @@ public class NoteServiceImpl implements NoteService{
 				updateNote.get().setUpdatedDate(LocalDateTime.now());
 				noteRepository.save(updateNote.get());
 				
-//				userIdList.get().getNoteID().set(Integer.valueOf(id.intValue()), updateNote.get());
-//				userRepository.save(userIdList.get());
-				
 				return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.update.sucessfully"),null);
 			}else {
 				throw new NoteNotCreate(enviroment.getProperty("note.not.updated"));
@@ -126,9 +124,9 @@ public class NoteServiceImpl implements NoteService{
 		Optional<NoteData> deleteNote= noteRepository.findById(id);
 		if(deleteNote!=null) {
 
-			if(id == deleteNote.get().getId()) {
+			if(id == deleteNote.get().getNoteId()) {
 		
-				userIdList.get().getNoteID().remove(deleteNote.get());
+				userIdList.get().getNoteList().remove(deleteNote.get());
 				userRepository.save(userIdList.get());
 				noteRepository.deleteById(id);
 				
@@ -233,15 +231,14 @@ public class NoteServiceImpl implements NoteService{
 	public NoteData storeFile(Long id,MultipartFile file)  {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 		Optional<NoteData> addFile = noteRepository.findById(id);
-	//	NoteData noteData = modelMapper.map(addFile,NoteData.class);
-       
+	
+      
         try {
 
         	if(fileName.contains("..")) {
              	throw new FileStorageException("note.not.upload.file");
              }
         	
-		//	noteData = new NoteData(fileName, file.getContentType(), file.getBytes());
 	        addFile.get().setFileName(fileName);
 	        addFile.get().setData(file.getBytes());
 	        addFile.get().setFileType(file.getContentType());
@@ -270,7 +267,8 @@ public class NoteServiceImpl implements NoteService{
 			deleteFile.get().setFileType(null);
 			deleteFile.get().setData(null);
 		    noteRepository.save(deleteFile.get());
-			return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.file.delete.sucessfully"),null);
+			
+		    return new Response(LocalDateTime.now(), HttpStatus.OK.value(), enviroment.getProperty("note.file.delete.sucessfully"),null);
 
 		}else {
             throw new FileStorageException("note.id.wrong");
@@ -296,14 +294,17 @@ public class NoteServiceImpl implements NoteService{
 	public Response addCollaborator(Long noteId, String email, String token) {
 		
 		Long userId = tokenUtil.decodeToken(token);
+		System.out.println("noteid:"+noteId+"userid"+userId);
+		NoteData note = noteRepository.findByNoteIdAndUserId(noteId, userId);
 		
-		NoteData note = noteRepository.findByidAndUserid(noteId, userId);
-		
+	//	Optional<NoteData> note = noteRepository.findById(noteId);
+		System.out.println("note is"+note);
 		Optional<UserData> emailList = userRepository.findByEmail(email);
 			
-		if(emailList.isPresent() && note!=null) {
-		  
+		if(emailList.isPresent()) {
+			
 			note.getCollaborator().add(emailList.get());
+			
 			noteRepository.save(note);
 		 		
 	        return new Response(LocalDateTime.now(),HttpStatus.ACCEPTED.value(), enviroment.getProperty("status.collaborator.add"), null);
@@ -317,11 +318,11 @@ public class NoteServiceImpl implements NoteService{
 	@Override
 	public Response deleteCollaborator(Long noteId, String email, String token) {
 		
-        Long userid = tokenUtil.decodeToken(token);
+        Long userId = tokenUtil.decodeToken(token);
         
         Optional<UserData> emailList = userRepository.findByEmail(email);
         
-        NoteData collaboraterList = noteRepository.findByidAndUserid(noteId, userid);
+        NoteData collaboraterList = noteRepository.findByNoteIdAndUserId(noteId, userId);
         
         collaboraterList.getCollaborator().remove(emailList.get());
         noteRepository.save(collaboraterList);

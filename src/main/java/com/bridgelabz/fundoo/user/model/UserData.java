@@ -53,14 +53,12 @@ public class UserData {
 	private long time;
 	
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<NoteData> noteID = new ArrayList<NoteData>();
-	
-	public UserData() {
-	}
+	private List<NoteData> noteList = new ArrayList<NoteData>();
 
+	 
 	public UserData(long userid, String firstName, String lastName, String email, String password,
 			LocalDateTime registeredDate, LocalDateTime updatedDate, String reTypePassword, boolean verify, long time,
-			List<NoteData> noteID) {
+			List<NoteData> noteList) {
 		super();
 		this.userid = userid;
 		this.firstName = firstName;
@@ -72,14 +70,13 @@ public class UserData {
 		this.reTypePassword = reTypePassword;
 		this.verify = verify;
 		this.time = time;
-		this.noteID = noteID;
+		this.noteList = noteList;
 	}
-
 
 	public long getUserid() {
 		return userid;
 	}
-	
+
 	public void setUserid(long userid) {
 		this.userid = userid;
 	}
@@ -156,20 +153,20 @@ public class UserData {
 		this.time = time;
 	}
 
-	public List<NoteData> getNoteID() {
-		return noteID;
+	public List<NoteData> getNoteList() {
+		return noteList;
 	}
 
-	public void setNoteID(List<NoteData> noteID) {
-		this.noteID = noteID;
+	public void setNoteList(List<NoteData> noteList) {
+		this.noteList = noteList;
 	}
 
 	@Override
 	public String toString() {
 		return "UserData [userid=" + userid + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
 				+ ", password=" + password + ", registeredDate=" + registeredDate + ", updatedDate=" + updatedDate
-				+ ", reTypePassword=" + reTypePassword + ", verify=" + verify + ", time=" + time + ", noteID=" + noteID
-				+ "]";
+				+ ", reTypePassword=" + reTypePassword + ", verify=" + verify + ", time=" + time + ", noteList="
+				+ noteList + "]";
 	}
 	
 }
